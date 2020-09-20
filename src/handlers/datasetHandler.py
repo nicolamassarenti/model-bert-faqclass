@@ -1,15 +1,21 @@
 import logging
 import re
 import numpy as np
+import tensorflow as tf
 
 logger = logging.getLogger(__name__)
 
 
 class DatasetHandler:
-    def __init__(self, database_service, knowledge_base_collection=None, keywords_collection=None):
+    def __init__(self,
+                 database_service,
+                 knowledge_base_collection=None,
+                 keywords_collection=None,
+                 train_split=0.8,
+                 val_split=0.1):
         """
         Initializes the DatasetHandler object
-
+        TODO: aggiornare  i param
         :param database_service: (object) the object that connects to the database
         :param knowledge_base_collection: (string) the name of the KB collection
         :param keywords_collection: (string) the name of the keywords collection
@@ -27,6 +33,11 @@ class DatasetHandler:
 
         self._knowledge_base_collection = knowledge_base_collection
         self._keywords_collection = keywords_collection
+        self._keywords = []
+        self._num_classes = 0
+
+        self._train_split = train_split
+        self._val_split = val_split
 
     def _get_examples_from_faq(self, faq):
         """
@@ -56,7 +67,7 @@ class DatasetHandler:
 
         return example_label_pairs
 
-    def _get_keyword_id(self, text, keywords):
+    def _get_keyword_id(self, text):
         """
         TODO: mettere descrizione
         :param text:
@@ -64,16 +75,15 @@ class DatasetHandler:
         :return:
         """
         text = text.lower()
-        keywords = [key.lower() for key in keywords]
 
         regex_pattern = r'(\s|\.|\')({})(\s|\n|\.|[?!])'
-        for idx, key in enumerate(keywords):
+        for idx, key in enumerate(self._keywords):
             if re.search(pattern=regex_pattern.format(key), string=text):
                 return idx + 1
 
         return 0
 
-    def _get_examples_keywords_labels(self, keywords, data):
+    def _get_examples_keywords_labels(self, data):
         """
         TODO: mettere descrizione
         :param keywords:
@@ -82,7 +92,7 @@ class DatasetHandler:
         """
         X_train, X_keywords, Y = [], [], []
         for example in data:
-            keyword_id = self._get_keyword_id(example["X"], keywords)
+            keyword_id = self._get_keyword_id(example["X"])
             X_train.append(example["X"])
             X_keywords.append(keyword_id)
             Y.append(example["Y"])
@@ -109,28 +119,80 @@ class DatasetHandler:
 
         return X_text, X_keys, Y
 
+    def _convert_to_categorical(self, vector):
+        """
+        TODO: mettere descrizione
+        :param vector:
+        :param num_classes:
+        :return:
+        """
+        return tf.keras.utils.to_categorical(y=vector, num_classes=self._num_classes)
+
     def get_data(self):
         """
         Returns the data (..... TODO: mettere descrizione)
         :return:
         """
 
-        #TODO: mettere qualche log sia di info sia di debug
+        # TODO: mettere qualche log sia di info sia di debug
         kb = self._database_service.get_all_data(self._knowledge_base_collection)
         keywords = self._database_service.get_all_data(self._keywords_collection)
 
-        keywords = list(map(lambda x : x["DisplayText"], keywords))
+        self._keywords = list(map(lambda x : x["DisplayText"].lower(), keywords))
 
         training_examples_and_labels = self._get_example_label_pairs(data=kb)
-        X_examples, X_keywords, Y = self._get_examples_keywords_labels(
-            keywords=keywords,
+        X_faqs, X_keywords, Y = self._get_examples_keywords_labels(
             data=training_examples_and_labels
         )
 
-        X_examples, X_keywords, Y = self._shuffle_and_convert_to_np_array(
-            X_text=X_examples,
+        X_faqs, X_keywords, Y = self._shuffle_and_convert_to_np_array(
+            X_text=X_faqs,
             X_keys=X_keywords,
             Y=Y
         )
 
-        return X_examples, X_keywords, Y
+        self._num_classes = len(set(X_keywords)) + 1
+
+        return {"faqs": X_faqs, "keywords": X_keywords}, Y
+
+    def get_train_validation_test_sets(self, X, Y):
+        """
+        TODO: descrizione + logs
+        :param X:
+        :param Y:
+        :return:
+        """
+        num_examples = len(X["faqs"])
+
+        limit_train = round(self._train_split * num_examples)
+        limit_val = round(self._val_split * num_examples)
+
+        X_faqs = X["faqs"]
+        X_keywords = X["keywords"]
+
+        # Train
+        X_train = {
+            "faqs": X_faqs[:limit_train],
+            "keywords": self._convert_to_categorical(X_keywords[:limit_train])
+        }
+        Y_train = self._convert_to_categorical(Y[:limit_train])
+
+        # Validation
+        X_val = {
+            "faqs": X_faqs[limit_train:limit_train + limit_val],
+            "keywords": self._convert_to_categorical(X_keywords[limit_train:limit_train + limit_val])
+        }
+        Y_val = self._convert_to_categorical(Y[limit_train:limit_train + limit_val])
+
+        # Test
+        X_test = {
+            "faqs": X_faqs[limit_train + limit_val:],
+            "keywords": self._convert_to_categorical(X_keywords[limit_train + limit_val:])
+        }
+        Y_test = self._convert_to_categorical(Y[min(num_examples, limit_train + limit_val):])
+
+        return X_train, Y_train, X_val, Y_val, X_test, Y_test
+
+    def get_num_classes(self):
+        """TODO: commento"""
+        return self._num_classes
