@@ -1,5 +1,4 @@
 import logging
-import os
 import traceback
 import tensorflow as tf
 import tensorflow_hub as hub
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class BertHandler:
 
-    def __init__(self, model_path, model_name="bert", model_version="default", max_sequence_length=128, plot_path = None):
+    def __init__(self, model_path, model_name="bert", model_version="default", max_sequence_length=128, plot_path = None, num_classes = 0, checkpoint_path = None):
         """
         The constructor of the handler.
 
@@ -30,6 +29,9 @@ class BertHandler:
         self._tokenizer = None
         self._max_sequence_length = max_sequence_length
         self._plot_path = plot_path
+        self._num_classes = num_classes
+        self._model = None
+        self._checkpoint_path = checkpoint_path
 
         self._init_bert_layer(trainable=False)
 
@@ -53,18 +55,15 @@ class BertHandler:
             logger.error("{}".format(stacktrace))
             raise e
 
-    def get_bert_layer(self):
-        """
-        Returns the bert layer
-
-        :return: object
-        """
-        return self._bert_layer
-
     def _encode_sentence(self, s):
         tokens = list(self._tokenizer.tokenize(s))
         tokens.append('[SEP]')
         return self._tokenizer.convert_tokens_to_ids(tokens)
+
+    def convert_ids_to_categorical(self, ids):
+        """TODO descrizione"""
+
+        return tf.keras.utils.to_categorical(y=ids, num_classes=self._num_classes)
 
     def encode(self, data):
         """
@@ -90,7 +89,15 @@ class BertHandler:
 
         return inputs
 
-    def build_custom_model(self, num_classes):
+    def get_bert_layer(self):
+        """
+        Returns the bert layer
+
+        :return: object
+        """
+        return self._bert_layer
+
+    def build_custom_model(self):
         """
         TODO commenti e logs
         :param num_classes:
@@ -112,16 +119,42 @@ class BertHandler:
         hidden = tf.keras.layers.Dense(256, activation=tf.nn.relu, name='dense_2')(hidden)
         hidden = tf.keras.layers.BatchNormalization(name='batch_norm_2')(hidden)
         hidden = tf.keras.layers.Dropout(0.5)(hidden)
-        output = tf.keras.layers.Dense(num_classes, activation=tf.nn.softmax, name='output')(hidden)
+        output = tf.keras.layers.Dense(self._num_classes, activation=tf.nn.softmax, name='output')(hidden)
 
-        model = tf.keras.Model([input_word_ids, input_mask, segment_ids, keywords_ids], output, name="FAQ_classifier")
-        model.summary()
-        model.compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001), metrics=['accuracy'])
+        self._model  = tf.keras.Model([input_word_ids, input_mask, segment_ids, keywords_ids], output, name="FAQ_classifier")
+        self._model .summary()
+        self._model .compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001), metrics=['accuracy'])
 
         if self._plot_path is not None:
             tf.keras.utils.plot_model(
-                model, to_file=self._plot_path, show_shapes=False, show_layer_names=True,
+                self._model , to_file=self._plot_path, show_shapes=False, show_layer_names=True,
                 rankdir='TB', expand_nested=False, dpi=96
             )
 
-        return model
+    def train(self, X_train, y_train, X_val, y_val, epochs = 200, load_checkpoint = False):
+        """
+        TODO: descrizione
+        :return:
+        """
+        callbacks = []
+        if self._checkpoint_path is not None and load_checkpoint:
+            cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self._checkpoint_path,
+                                                             save_weights_only=True,
+                                                             verbose=1)
+            callbacks = [cp_callback]
+
+        early_stopping = tf.keras.callbacks.EarlyStopping(
+            monitor='val_loss',
+            verbose=1,
+            mode='auto'
+        )
+        callbacks.append(early_stopping)
+
+        self._model.fit(
+            X_train,
+            y_train,
+            epochs=epochs,
+            validation_data=(X_val, y_val),
+            verbose=1,
+            callbacks=callbacks
+        )

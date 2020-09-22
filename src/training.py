@@ -24,7 +24,9 @@ def train(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, num_clas
         model_name=os.getenv("MODEL_NAME"),
         model_version=os.getenv("MODEL_VERSION"),
         max_sequence_length=int(os.getenv("MAX_SEQ_LENGTH")),
-        plot_path=os.getenv("PATH_MODEL_PLOT")
+        plot_path=os.getenv("PATH_MODEL_PLOT"),
+        num_classes=num_classes,
+        checkpoint_path=os.getenv("PATH_MODEL_CHECKPOINT")
     )
     logger.info("Bert handler successfully created")
 
@@ -33,15 +35,24 @@ def train(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, num_clas
     X_test_encoded = bert_handler.encode(X_test["faqs"])
     logger.info("Encoding executed.")
 
-    X_train_encoded["keywords_ids"] = X_train["keywords_ids"]
-    X_validation_encoded["keywords_ids"] = X_validation["keywords_ids"]
-    X_test_encoded["keywords_ids"] = X_test["keywords_ids"]
+    X_train_encoded["keywords_ids"] = bert_handler.convert_ids_to_categorical(X_train["keywords_ids"])
+    X_validation_encoded["keywords_ids"] = bert_handler.convert_ids_to_categorical(X_validation["keywords_ids"])
+    X_test_encoded["keywords_ids"] = bert_handler.convert_ids_to_categorical(X_test["keywords_ids"])
+    logger.info("Keywords ids converted to categorical.")
 
-    logger.info("Tokenization completed.")
+    model = bert_handler.build_custom_model()
+    logger.info("Model built.")
 
-    model = bert_handler.build_custom_model(
-        num_classes=num_classes
+    logger.info("Starting training")
+    bert_handler.train(
+        X_train = X_train_encoded,
+        y_train=Y_train,
+        X_val=X_validation_encoded,
+        y_val=Y_validation,
+        epochs=int(os.getenv("MODEL_TRAINING_EPOCHS")),
+        load_checkpoint=False
     )
+    logger.info("Training completed")
 
 
 
