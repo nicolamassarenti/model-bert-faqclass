@@ -153,7 +153,7 @@ class DatasetHandler:
 
         self._num_classes = len(set(X_keywords)) + 1
 
-        return {"faqs": X_faqs, "keywords": X_keywords}, Y
+        return {"faqs": X_faqs, "keywords_ids": X_keywords}, Y
 
     def get_train_validation_test_sets(self, X, Y):
         """
@@ -168,26 +168,26 @@ class DatasetHandler:
         limit_val = round(self._val_split * num_examples)
 
         X_faqs = X["faqs"]
-        X_keywords = X["keywords"]
+        X_keywords_ids = X["keywords_ids"]
 
         # Train
         X_train = {
             "faqs": X_faqs[:limit_train],
-            "keywords": self._convert_to_categorical(X_keywords[:limit_train])
+            "keywords_ids": self._convert_to_categorical(X_keywords_ids[:limit_train])
         }
         Y_train = self._convert_to_categorical(Y[:limit_train])
 
         # Validation
         X_val = {
             "faqs": X_faqs[limit_train:limit_train + limit_val],
-            "keywords": self._convert_to_categorical(X_keywords[limit_train:limit_train + limit_val])
+            "keywords_ids": self._convert_to_categorical(X_keywords_ids[limit_train:limit_train + limit_val])
         }
         Y_val = self._convert_to_categorical(Y[limit_train:limit_train + limit_val])
 
         # Test
         X_test = {
             "faqs": X_faqs[limit_train + limit_val:],
-            "keywords": self._convert_to_categorical(X_keywords[limit_train + limit_val:])
+            "keywords_ids": self._convert_to_categorical(X_keywords_ids[limit_train + limit_val:])
         }
         Y_test = self._convert_to_categorical(Y[min(num_examples, limit_train + limit_val):])
 

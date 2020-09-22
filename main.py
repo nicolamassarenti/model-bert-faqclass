@@ -34,6 +34,8 @@ if __name__ == "__main__":
 
     # Splitting the dataset into train, validation and test sets
     X_train, Y_train, X_val, Y_val, X_test, Y_test = dataset_handler.get_train_validation_test_sets(X, Y)
+    logger.info("Dataset splitted into train, validation and test sets.")
+
     # Running training
     train(
         X_train=X_train,
@@ -44,3 +46,4 @@ if __name__ == "__main__":
         Y_test=Y_test,
         num_classes=num_classes
     )
+    logger.info("Training executed.")

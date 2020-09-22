@@ -3,6 +3,7 @@ models/
 .idea
 old/
 auth/
+output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
