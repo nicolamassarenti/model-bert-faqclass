@@ -163,7 +163,9 @@
 					"Examples": [
 						"Posso aggiungere un utenza al mio account?",
 						"Come posso aggiungere un utente al mio account?",
-						"Vorrei aggiungere un utente, come posso fare?"
+						"Vorrei aggiungere un utente, come posso fare?",
+						"Ho il permesso STAR1, posso aggiungere un utente?",
+						"E' possibile aggiungere un utenza con un account STAR1?"
 					]
 				},
 				{
@@ -171,7 +173,9 @@
 					"Examples": [
 						"Can I add a user to my account?",
 						"How can I add a user to my account?",
-						"I would like to add a user, what can I do?"
+						"I would like to add a user, what can I do?",
+						"I have STAR1 permission, can I add a user?",
+						"Is it possible to add a user with a STAR1 account?"
 					]
 				},
 				{
@@ -179,7 +183,9 @@
 					"Examples": [
 						"Puis-je ajouter un utilisateur à mon compte?",
 						"Comment puis-je ajouter un utilisateur à mon compte?",
-						"Je souhaite ajouter un utilisateur, que puis-je faire?"
+						"Je souhaite ajouter un utilisateur, que puis-je faire?",
+						"J'ai l'autorisation STAR1, puis-je ajouter un utilisateur?",
+						"Est-il possible d'ajouter un utilisateur avec un compte STAR1?"
 					]
 				},
 				{
@@ -187,7 +193,9 @@
 					"Examples": [
 						"Kann ich meinem Konto einen Benutzer hinzufügen?",
 						"Wie kann ich meinem Konto einen Benutzer hinzufügen?",
-						"Ich möchte einen Benutzer hinzufügen. Was kann ich tun?"
+						"Ich möchte einen Benutzer hinzufügen. Was kann ich tun?",
+						"Ich habe die STAR1-Berechtigung. Kann ich einen Benutzer hinzufügen?",
+						"Ist es möglich, einen Benutzer mit einem STAR1-Konto hinzuzufügen?"
 					]
 				},
 				{
@@ -195,7 +203,9 @@
 					"Examples": [
 						"Kan ik een gebruiker aan mijn account toevoegen?",
 						"Hoe kan ik een gebruiker aan mijn account toevoegen?",
-						"Ik wil een gebruiker toevoegen, wat kan ik doen?"
+						"Ik wil een gebruiker toevoegen, wat kan ik doen?",
+						"Ik heb STAR1-toestemming, kan ik een gebruiker toevoegen?",
+						"Is het mogelijk om een ​​gebruiker toe te voegen met een STAR1-account?"
 					]
 				}
 			],
