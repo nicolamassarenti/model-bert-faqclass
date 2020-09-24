@@ -1,0 +1,1096 @@
+{
+	"KB": [
+		{
+			"IsTrained": true,
+			"MainExample": "Come cambio il nome utente?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Come cambio il nome utente?",
+						"Come posso modificare il mio account?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"How do I change my username?",
+						"How can I change my account?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Comment changer mon nom d'utilisateur?",
+						"Comment puis-je changer de compte?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Wie ändere ich meinen Benutzernamen?",
+						"Wie kann ich mein Konto ändern?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Hoe verander ik mijn gebruikersnaam?",
+						"Hoe kan ik mijn account wijzigen?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Puoi modificare il tuo account accedendo ad 'Impostazioni' e cliccando su 'Modifica account'",
+						"Per modificare il tuo account accedi ad 'Impostazioni', poi 'Modifica account'"
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"You can change your account by going to 'Settings' and clicking on 'Change account'",
+						"To change your account go to 'Settings', then 'Change account'"
+						
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Vous pouvez modifier votre compte en allant dans 'Paramètres' et en cliquant sur 'Changer de compte'",
+						"Pour changer de compte, allez dans 'Paramètres', puis 'Changer de compte'"
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Sie können Ihr Konto ändern, indem Sie auf 'Einstellungen' klicken und auf 'Konto ändern' klicken.",
+						"Um Ihr Konto zu ändern, gehen Sie zu 'Einstellungen' und dann zu 'Konto ändern'."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"U kunt uw account wijzigen door naar 'Instellingen' te gaan en op 'Account wijzigen' te klikken",
+						"Om je account te wijzigen, ga naar 'Instellingen' en vervolgens 'Account wijzigen'"
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Come cambio la password?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Come cambio la password?",
+						"Voglio cambiare la password, come posso fare?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"How do I change my password?",
+						"I want to change the password, what can I do?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Comment est-ce que je change mon mot de passe?",
+						"Je veux changer le mot de passe, que puis-je faire?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Wie ändere ich mein Passwort?",
+						"Ich möchte das Passwort ändern. Was kann ich tun?"						
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Hoe verander ik mijn wachtwoord?",
+						"Ik wil het wachtwoord wijzigen, wat kan ik doen?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Per cambiare password accedi alle impostazioni del tuo account, quindi seleziona 'Account e protezione', poi clicca su 'Cambio password'."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"To change your password, go to your account settings, then select 'Account and security', then click on 'Change password'."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Pour changer votre mot de passe, allez dans les paramètres de votre compte, puis sélectionnez 'Compte et sécurité', puis cliquez sur 'Modifier le mot de passe'."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Um Ihr Passwort zu ändern, gehen Sie zu Ihren Kontoeinstellungen, wählen Sie 'Konto und Sicherheit' und klicken Sie dann auf 'Passwort ändern'."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"Om uw wachtwoord te wijzigen, gaat u naar uw accountinstellingen, selecteert u 'Account en beveiliging' en klikt u vervolgens op 'Wachtwoord wijzigen'."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Posso aggiungere un utenza al mio account?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Posso aggiungere un utenza al mio account?",
+						"Come posso aggiungere un utente al mio account?",
+						"Vorrei aggiungere un utente, come posso fare?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"Can I add a user to my account?",
+						"How can I add a user to my account?",
+						"I would like to add a user, what can I do?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Puis-je ajouter un utilisateur à mon compte?",
+						"Comment puis-je ajouter un utilisateur à mon compte?",
+						"Je souhaite ajouter un utilisateur, que puis-je faire?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Kann ich meinem Konto einen Benutzer hinzufügen?",
+						"Wie kann ich meinem Konto einen Benutzer hinzufügen?",
+						"Ich möchte einen Benutzer hinzufügen. Was kann ich tun?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Kan ik een gebruiker aan mijn account toevoegen?",
+						"Hoe kan ik een gebruiker aan mijn account toevoegen?",
+						"Ik wil een gebruiker toevoegen, wat kan ik doen?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Se sei un utente con permesso STAR1 puoi aggiungere un utente accedendo al menù 'Impostazioni', 'IAM'. Se non sei un utente STAR1 puoi aggiungere un utente contattando il Customer Service."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"If you are a user with STAR1 permission you can add a user by accessing the 'Settings' menu, 'IAM'. If you are not a STAR1 user you can add a user by contacting the Customer Service."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Si vous êtes un utilisateur avec l'autorisation STAR1, vous pouvez ajouter un utilisateur en accédant au menu 'Paramètres', 'IAM'. Si vous n'êtes pas un utilisateur STAR1, vous pouvez ajouter un utilisateur en contactant le service clientèle."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Wenn Sie ein Benutzer mit STAR1-Berechtigung sind, können Sie einen Benutzer hinzufügen, indem Sie auf das Menü 'Einstellungen', 'IAM' zugreifen. Wenn Sie kein STAR1-Benutzer sind, können Sie einen Benutzer hinzufügen, indem Sie sich an den Kundendienst wenden."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"Als u een gebruiker bent met STAR1-toestemming, kunt u een gebruiker toevoegen door het menu 'Instellingen', 'IAM', te openen. Als u geen STAR1-gebruiker bent, kunt u een gebruiker toevoegen door contact op te nemen met de klantenservice."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Come modifico la mail associata al mio account?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Come modifico la mail associata al mio account?",
+						"Voglio cambiare la mail dell'account, come posso fare?",
+						"Come cambio l'indirizzo di posta elettronica?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"How do I change the email associated with my account?",
+						"I want to change my account email, what can I do?",
+						"How do I change my e-mail address?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Comment modifier l'adresse e-mail associée à mon compte?",
+						"Je souhaite modifier l'adresse e-mail de mon compte, que puis-je faire?",
+						"Comment changer mon adresse e-mail?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Wie ändere ich die meinem Konto zugeordnete E-Mail?",
+						"Ich möchte meine Konto-E-Mail-Adresse ändern. Was kann ich tun?",
+						"Wie ändere ich meine E-Mail-Adresse?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Hoe verander ik het e-mailadres dat aan mijn account is gekoppeld?",
+						"Ik wil het e-mailadres van mijn account wijzigen, wat kan ik doen?",
+						"Hoe verander ik mijn e-mailadres?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Puoi cambiare l'indirizzo e-mail associato al tuo account accedendo ad 'Impostazioni', 'Account'."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"You can change the email address associated with your account by going to 'Settings', 'Account'."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"You can change the email address associated with your account by going to 'Settings', 'Account'."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Sie können die Ihrem Konto zugeordnete E-Mail-Adresse ändern, indem Sie auf 'Einstellungen', 'Konto' klicken."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"U kunt het e-mailadres dat aan uw account is gekoppeld wijzigen door naar 'Instellingen', 'Account' te gaan."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Come gestisco le notifiche?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Come gestisco le notifiche?",
+						"Come modifico le impostazioni per le notifiche che ricevo?",
+						"Voglio ricevere meno notifiche, come posso fare?",
+						"Come modifico le impostazioni per gli avvisi che ricevo?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"How do I manage notifications?",
+						"How do I change the settings for the notifications I receive?",
+						"I want to receive fewer notifications, what can I do?",
+						"How do I change the settings for the alerts I receive?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Comment gérer les notifications?",
+						"Comment modifier les paramètres des notifications que je reçois?",
+						"Je souhaite recevoir moins de notifications, que puis-je faire?",
+						"Comment modifier les paramètres des alertes que je reçois?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Wie verwalte ich Benachrichtigungen?",
+						"Wie ändere ich die Einstellungen für die Benachrichtigungen, die ich erhalte?",
+						"Ich möchte weniger Benachrichtigungen erhalten. Was kann ich tun?",
+						"Wie ändere ich die Einstellungen für die Benachrichtigungen, die ich erhalte?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Hoe beheer ik meldingen?",
+						"Hoe verander ik de instellingen voor de meldingen die ik ontvang?",
+						"Ik wil minder meldingen ontvangen, wat kan ik doen?",
+						"Hoe verander ik de instellingen voor de waarschuwingen die ik ontvang?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Puoi modificare le notifiche che ricevi accedendo ad 'Impostazioni', quindi 'Messaggi e notifiche'."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"You can change the notifications you receive by going to 'Settings', then 'Messages and notifications'."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Vous pouvez modifier les notifications que vous recevez en allant dans 'Paramètres', puis 'Messages et notifications'."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Sie können die Benachrichtigungen, die Sie erhalten, ändern, indem Sie zu 'Einstellungen' und dann zu 'Nachrichten und Benachrichtigungen' gehen."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"U kunt de meldingen die u ontvangt wijzigen door naar 'Instellingen' en vervolgens 'Berichten en meldingen' te gaan."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Posso eliminare un'utenza dal mio account?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Posso eliminare un'utenza dal mio account?",
+						"Come posso rimuovere un utente al mio account?",
+						"Vorrei eliminare un utente, come posso fare?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"Can I delete a user from my account?",
+						"How can I remove a user from my account?",
+						"I would like to delete a user, what can I do?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Puis-je supprimer un utilisateur de mon compte?",
+						"Comment puis-je supprimer un utilisateur de mon compte?",
+						"Je souhaite supprimer un utilisateur, que puis-je faire?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Kann ich einen Benutzer aus meinem Konto löschen?",
+						"Wie kann ich einen Benutzer aus meinem Konto entfernen?",
+						"Ich möchte einen Benutzer löschen. Was kann ich tun?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Kan ik een gebruiker uit mijn account verwijderen?",
+						"Hoe kan ik een gebruiker uit mijn account verwijderen?",
+						"Ik wil een gebruiker verwijderen, wat kan ik doen?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Se sei un utente con permesso STAR1 puoi rimuovere un utente accedendo al menù 'Impostazioni', 'IAM'. Se non sei un utente STAR1 puoi rimuovere un utente contattando il Customer Service."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"If you are a user with STAR1 permission you can remove a user by accessing the 'Settings' menu, 'IAM'. If you are not a STAR1 user you can remove a user by contacting the Customer Service."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Si vous êtes un utilisateur avec l'autorisation STAR1, vous pouvez supprimer un utilisateur en accédant au menu 'Paramètres', 'IAM'. Si vous n'êtes pas un utilisateur STAR1, vous pouvez supprimer un utilisateur en contactant le service client."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Wenn Sie ein Benutzer mit STAR1-Berechtigung sind, können Sie einen Benutzer entfernen, indem Sie auf das Menü 'Einstellungen', 'IAM', zugreifen. Wenn Sie kein STAR1-Benutzer sind, können Sie einen Benutzer entfernen, indem Sie sich an den Kundendienst wenden."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"Als u een gebruiker bent met STAR1-toestemming, kunt u een gebruiker verwijderen door naar het menu 'Instellingen', 'IAM', te gaan. Als u geen STAR1-gebruiker bent, kunt u een gebruiker verwijderen door contact op te nemen met de klantenservice."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Come posso creare un report con i miei dati?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Come posso creare un report con i miei dati?",
+						"Vorrei creare un report con i miei dati, come posso fare?",
+						"Voglio scaricare il rapporto con il mio profilo, come faccio?",
+						"Come si scarica il report con i miei dati?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"How can I create a report with my data?",
+						"I would like to create a report with my data, what can I do?",
+						"I want to download the report with my profile, how do I do it?",
+						"How do I download the report with my data?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Comment puis-je créer un rapport avec mes données?",
+						"Je souhaite créer un rapport avec mes données, que puis-je faire?",
+						"Je veux télécharger le rapport avec mon profil, comment faire?",
+						"Comment télécharger le rapport avec mes données?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Wie kann ich mit meinen Daten einen Bericht erstellen?",
+						"Ich möchte einen Bericht mit meinen Daten erstellen. Was kann ich tun?",
+						"Ich möchte den Bericht mit meinem Profil herunterladen. Wie mache ich das?",
+						"Wie lade ich den Bericht mit meinen Daten herunter?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Hoe kan ik een rapport maken met mijn gegevens?",
+						"Ik wil graag een rapport maken met mijn gegevens, wat kan ik doen?",
+						"Ik wil het rapport downloaden met mijn profiel, hoe doe ik dat?",
+						"Hoe download ik het rapport met mijn gegevens?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Per scaricare il report con i tuoi dati è sufficiente accedere a 'Il mio profilo' e cliccare sul bottone 'Scarica report'."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"To download the report with your data, simply access 'My profile' and click on the 'Download report' button."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Pour télécharger le rapport avec vos données, accédez simplement à 'Mon profil' et cliquez sur le bouton 'Télécharger le rapport'."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Um den Bericht mit Ihren Daten herunterzuladen, greifen Sie einfach auf 'Mein Profil' zu und klicken Sie auf die Schaltfläche 'Bericht herunterladen'."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"Om het rapport met uw gegevens te downloaden, gaat u naar 'Mijn profiel' en klikt u op de knop 'Rapport downloaden'."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Posso cercare un documento filtrando per proprietà?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Posso cercare un documento filtrando per proprietà?",
+						"Voglio effettuare una ricerca avanzata, come posso fare?",
+						"Come posso cercare un documento rispetto un campo specifico?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"Can I search for a document by filtering by property?",
+						"I want to carry out an advanced search, what can I do?",
+						"How can I search for a document with respect to a specific field?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Can I search for a document by filtering by property?",
+						"I want to carry out an advanced search, what can I do?",
+						"How can I search for a document with respect to a specific field?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Kann ich nach einem Dokument suchen, indem ich nach Eigenschaften filtere?",
+						"Ich möchte eine erweiterte Suche durchführen. Was kann ich tun?",
+						"Wie kann ich nach einem Dokument in Bezug auf ein bestimmtes Feld suchen?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Kan ik naar een document zoeken door te filteren op eigenschap?",
+						"Ik wil een uitgebreide zoekopdracht uitvoeren, wat kan ik doen?",
+						"Hoe kan ik zoeken naar een document met betrekking tot een specifiek veld?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Puoi cliccare su 'Ricerca avanzata' e filtrare i documenti rispetto i campi/valori desiderati."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"You can click on 'Advanced Search' and filter the documents by the desired fields / values."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Vous pouvez cliquer sur 'Recherche avancée' et filtrer les documents selon les champs / valeurs souhaités."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Sie können auf 'Erweiterte Suche' klicken und die Dokumente nach den gewünschten Feldern / Werten filtern."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"U kunt op 'Geavanceerd zoeken' klikken en de documenten filteren op de gewenste velden / waarden."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Come modifico le informazioni per la fatturazione?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Come modifico le informazioni per la fatturazione?",
+						"Come posso cambiare la carta utilizzata per la fatturazione?",
+						"Voglio cambiare la carta usata per le fatture, come posso fare?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"How do I change my billing information?",
+						"How can I change the card used for billing?",
+						"I want to change the card used for invoices, what can I do?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Comment modifier mes informations de facturation?",
+						"Comment puis-je changer la carte utilisée pour la facturation?",
+						"Je souhaite changer la carte utilisée pour les factures, que puis-je faire?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Wie ändere ich meine Rechnungsinformationen?",
+						"Wie kann ich die für die Abrechnung verwendete Karte ändern?",
+						"Ich möchte die für Rechnungen verwendete Karte ändern. Was kann ich tun?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Hoe wijzig ik mijn factuurgegevens?",
+						"Hoe kan ik de kaart wijzigen die voor facturering wordt gebruikt?",
+						"Ik wil de kaart die voor facturen wordt gebruikt, wijzigen, wat kan ik doen?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Per modificare le modalità di fatturazione puoi accedere a 'Il mio account', 'Fatturazione'."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"To change your billing method, you can log into 'My Account', 'Billing'."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Pour modifier la façon dont vous êtes facturé, vous pouvez accéder à 'Mon compte', 'Facturation'."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Um die Art und Weise zu ändern, in der Sie abgerechnet werden, können Sie zu 'Mein Konto', 'Abrechnung' gehen."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"Om uw factureringsmethode te wijzigen, kunt u inloggen op 'Mijn account', 'Facturering'."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Dove trovo il codice XRT?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Dove trovo il codice XRT?",
+						"Dove posso trovare l'XRT?",
+						"Sto cercando il codice XRT ma non lo trovo, dov'è?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"Where do I find the XRT code?",
+						"Where can I find the XRT?",
+						"I'm looking for the XRT code but can't find it, where is it?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Où puis-je trouver le code XRT?",
+						"Où puis-je trouver le XRT?",
+						"Je cherche le code XRT mais je ne le trouve pas, où est-il?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Wo finde ich den XRT-Code?",
+						"Wo finde ich das XRT?",
+						"Ich suche nach dem XRT-Code, kann ihn aber nicht finden. Wo ist er?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Waar vind ik de XRT-code?",
+						"Waar kan ik de XRT vinden?",
+						"Ik zoek de XRT-code maar kan hem niet vinden. Waar is die?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Lo trovi in 'Il mio account', 'I miei codici'."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"You can find it in 'My Account', 'My Codes'."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Vous pouvez le trouver dans 'Mon compte', 'Mes codes'."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Sie finden es unter 'Mein Konto', 'Meine Codes'."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"U vindt het in 'Mijn account', 'Mijn codes'."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Dove si scaricano le fatture?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Dove si scaricano le fatture?",
+						"Come posso scaricare le fatture?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"Where are the invoices downloaded?",
+						"How can I download the invoices?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Où sont téléchargées les factures?",
+						"Comment puis-je télécharger les factures?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Wo werden die Rechnungen heruntergeladen?",
+						"Wie kann ich die Rechnungen herunterladen?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Waar worden de facturen gedownload?",
+						"Hoe kan ik de facturen downloaden?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Puoi scaricare le fatture accedendo ad 'Il mio account', 'Fatture'."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"You can download invoices by logging into 'My Account', 'Invoices'."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Vous pouvez télécharger des factures en vous connectant à 'Mon compte', 'Factures'."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Sie können Rechnungen herunterladen, indem Sie sich bei 'Mein Konto', 'Rechnungen' anmelden."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"U kunt facturen downloaden door in te loggen op 'Mijn account', 'Facturen'."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Dove si modifica l'APN?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Dove si modifica l'APN?",
+						"Come modifico l'APN?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"Where is the APN changed?",
+						"How do I change the APN?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Où l'APN a-t-il changé?",
+						"Comment puis-je changer l'APN?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Wo wird der APN geändert?",
+						"Wie ändere ich den APN?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Waar is de APN gewijzigd?",
+						"Hoe verander ik de APN?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Per modificare l'APN devi andare in 'Area Personale', 'I miei codici'."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"To change the APN you have to go to 'Personal Area', 'My codes'."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Pour changer l'APN, vous devez aller dans 'Espace personnel', 'Mes codes'."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Um den APN zu ändern, müssen Sie zu 'Persönlicher Bereich', 'Meine Codes' gehen."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"Om de APN te wijzigen, moet u naar 'Persoonlijk gebied', 'Mijn codes' gaan."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Posso modificare i codici IRTES?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Posso modificare i codici IRTES?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"Can I change the IRTES codes?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Puis-je changer les codes IRTES?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Kann ich die IRTES-Codes ändern?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Kan ik de IRTES-codes wijzigen?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Non è possibile modificare i codici IRTES dal portale. Per ulteriori esigenze contatta il Customer Service."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"It is not possible to change the IRTES codes from the portal. For further needs, please contact Customer Service."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"Il n'est pas possible de modifier les codes IRTES depuis le portail. Pour d'autres besoins, veuillez contacter le service clientèle."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"Es ist nicht möglich, die IRTES-Codes über das Portal zu ändern. Für weitere Informationen wenden Sie sich bitte an den Kundendienst."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"Het is niet mogelijk om de IRTES-codes vanuit het portaal te wijzigen. Neem voor verdere behoeften contact op met de klantenservice."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		},
+		{
+			"IsTrained": true,
+			"MainExample": "Che cos'è il PTOPT?",
+			"TrainingExamples":[
+				{
+					"Language":"it",
+					"Examples": [
+						"Che cos'è il PTOPT?",
+						"Che cosa significa PTOPT?",
+						"Qual è il significato di PTOPT?"
+					]
+				},
+				{
+					"Language":"en",
+					"Examples": [
+						"What is PTOPT?",
+						"What does PTOPT mean?",
+						"What is the meaning of PTOPT?"
+					]
+				},
+				{
+					"Language":"fr",
+					"Examples": [
+						"Qu'est-ce que PTOPT?",
+						"Que signifie PTOPT?",
+						"Quelle est la signification de PTOPT?"
+					]
+				},
+				{
+					"Language":"de",
+					"Examples": [
+						"Was ist PTOPT?",
+						"Was bedeutet PTOPT?",
+						"Was bedeutet PTOPT?"
+					]
+				},
+				{
+					"Language":"nl",
+					"Examples": [
+						"Wat is PTOPT?",
+						"Wat betekent PTOPT?",
+						"Wat is de betekenis van PTOPT?"
+					]
+				}
+			],
+			"Answers": [
+				{
+					"Language": "it",
+					"Answers": [
+						"Il PTOPT è un acronimo inventato per mostrare l'uso delle keyword."
+					]
+				},
+				{
+					"Language": "en",
+					"Answers": [
+						"PTOPT is an acronym invented to show the use of keywords."
+					]
+				},
+				{
+					"Language": "fr",
+					"Answers": [
+						"PTOPT est un acronyme inventé pour montrer l'utilisation de mots-clés."
+					]
+				},
+				{
+					"Language": "de",
+					"Answers": [
+						"PTOPT ist ein Akronym, das erfunden wurde, um die Verwendung von Schlüsselwörtern zu zeigen."
+					]
+				},
+				{
+					"Language": "nl",
+					"Answers": [
+						"PTOPT is een acroniem dat is uitgevonden om het gebruik van trefwoorden weer te geven."
+					]
+				}
+			],
+			"UpdateDate": "2020-09-23 10:00.00"
+		}
+	]
+}
