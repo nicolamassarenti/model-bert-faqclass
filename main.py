@@ -29,7 +29,8 @@ if __name__ == "__main__":
 
     # Retrieving data
     X, Y = dataset_handler.get_data()
-    num_classes = dataset_handler.get_num_classes()
+    num_classes_keywords = dataset_handler.get_num_classes_keywords()
+    num_classes_faqs = dataset_handler.get_num_classes_faqs()
     logger.info("Dataset retrieved")
 
     # Splitting the dataset into train, validation and test sets
@@ -44,6 +45,6 @@ if __name__ == "__main__":
         Y_validation=Y_val,
         X_test=X_test,
         Y_test=Y_test,
-        num_classes=num_classes
+        num_classes={"keywords": num_classes_keywords, "faqs": num_classes_faqs}
     )
     logger.info("Training executed.")

@@ -34,7 +34,9 @@ class DatasetHandler:
         self._knowledge_base_collection = knowledge_base_collection
         self._keywords_collection = keywords_collection
         self._keywords = []
-        self._num_classes = 0
+        self._num_classes_keywords = 0
+        self._num_classes_faqs = 0
+        self._regex = r'(\s|\.|\')({})(\s|\n|\.|[?!-])'
 
         self._train_split = train_split
         self._val_split = val_split
@@ -76,12 +78,11 @@ class DatasetHandler:
         """
         text = text.lower()
 
-        regex_pattern = r'(\s|\.|\')({})(\s|\n|\.|[?!])'
         for idx, key in enumerate(self._keywords):
-            if re.search(pattern=regex_pattern.format(key), string=text):
-                return idx + 1
+            if re.search(pattern=self._regex.format(key), string=text):
+                return idx
 
-        return 0
+        return None
 
     def _get_examples_keywords_labels(self, data):
         """
@@ -119,14 +120,6 @@ class DatasetHandler:
 
         return X_text, X_keys, Y
 
-    def _convert_to_categorical(self, vector):
-        """
-        TODO: mettere descrizione
-        :param vector:
-        :param num_classes:
-        :return:
-        """
-        return tf.keras.utils.to_categorical(y=vector, num_classes=self._num_classes)
 
     def get_data(self):
         """
@@ -151,7 +144,10 @@ class DatasetHandler:
             Y=Y
         )
 
-        self._num_classes = len(set(X_keywords)) + 1
+        classes_keywords = set(X_keywords)
+        classes_keywords.remove(None)
+        self._num_classes_keywords = len(classes_keywords)
+        self._num_classes_faqs = len(kb)
 
         return {"faqs": X_faqs, "keywords_ids": X_keywords}, Y
 
@@ -173,26 +169,31 @@ class DatasetHandler:
         # Train
         X_train = {
             "faqs": X_faqs[:limit_train],
-            "keywords_ids": self._convert_to_categorical(X_keywords_ids[:limit_train])
+            "keywords_ids": X_keywords_ids[:limit_train]
         }
-        Y_train = self._convert_to_categorical(Y[:limit_train])
+        Y_train = Y[:limit_train]
 
         # Validation
         X_val = {
             "faqs": X_faqs[limit_train:limit_train + limit_val],
-            "keywords_ids": self._convert_to_categorical(X_keywords_ids[limit_train:limit_train + limit_val])
+            "keywords_ids": X_keywords_ids[limit_train:limit_train + limit_val]
         }
-        Y_val = self._convert_to_categorical(Y[limit_train:limit_train + limit_val])
+        Y_val = Y[limit_train:limit_train + limit_val]
 
         # Test
         X_test = {
             "faqs": X_faqs[limit_train + limit_val:],
-            "keywords_ids": self._convert_to_categorical(X_keywords_ids[limit_train + limit_val:])
+            "keywords_ids": X_keywords_ids[limit_train + limit_val:]
         }
-        Y_test = self._convert_to_categorical(Y[min(num_examples, limit_train + limit_val):])
+        Y_test = Y[min(num_examples, limit_train + limit_val):]
 
         return X_train, Y_train, X_val, Y_val, X_test, Y_test
 
-    def get_num_classes(self):
+    def get_num_classes_keywords(self):
         """TODO: commento"""
-        return self._num_classes
+        return self._num_classes_keywords
+
+    def get_num_classes_faqs(self):
+        """TODO: commento"""
+        return self._num_classes_faqs
+

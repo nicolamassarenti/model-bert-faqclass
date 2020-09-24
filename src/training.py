@@ -25,7 +25,6 @@ def train(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, num_clas
         model_version=os.getenv("MODEL_VERSION"),
         max_sequence_length=int(os.getenv("MAX_SEQ_LENGTH")),
         plot_path=os.getenv("PATH_MODEL_PLOT"),
-        num_classes=num_classes,
         checkpoint_path=os.getenv("PATH_MODEL_CHECKPOINT")
     )
     logger.info("Bert handler successfully created")
@@ -35,13 +34,15 @@ def train(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, num_clas
     X_test_encoded = bert_handler.encode(X_test["faqs"])
     logger.info("Encoding executed.")
 
-    X_train_encoded["keywords_ids"] = bert_handler.convert_ids_to_categorical(X_train["keywords_ids"])
-    X_validation_encoded["keywords_ids"] = bert_handler.convert_ids_to_categorical(X_validation["keywords_ids"])
-    X_test_encoded["keywords_ids"] = bert_handler.convert_ids_to_categorical(X_test["keywords_ids"])
+    X_train_encoded["keywords_ids"] = bert_handler.get_feature_from_ids(X_train["keywords_ids"], num_classes["keywords"])
+    X_validation_encoded["keywords_ids"] = bert_handler.get_feature_from_ids(X_validation["keywords_ids"], num_classes["keywords"])
+    X_test_encoded["keywords_ids"] = bert_handler.get_feature_from_ids(X_test["keywords_ids"], num_classes["keywords"])
     logger.info("Keywords ids converted to categorical.")
 
-    model = bert_handler.build_custom_model()
+    bert_handler.build_custom_model(num_keywords=num_classes["keywords"], output_classes=num_classes["faqs"])
     logger.info("Model built.")
+
+    x = [X_train_encoded["input_word_ids"], X_train_encoded["input_mask"], X_train_encoded["segment_ids"], X_train_encoded["keywords_ids"]]
 
     logger.info("Starting training")
     bert_handler.train(

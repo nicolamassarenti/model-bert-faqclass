@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 
 class BertHandler:
 
-    def __init__(self, model_path, model_name="bert", model_version="default", max_sequence_length=128, plot_path = None, num_classes = 0, checkpoint_path = None):
+    def __init__(self, model_path, model_name="bert", model_version="default", max_sequence_length=128, plot_path=None,
+                 checkpoint_path=None):
         """
         The constructor of the handler.
 
@@ -25,11 +26,10 @@ class BertHandler:
         self.model_version = model_version
         self.model_name = model_name
         self._params = None
-        self._bert_layer = None
+        self._bert_model = None
         self._tokenizer = None
         self._max_sequence_length = max_sequence_length
         self._plot_path = plot_path
-        self._num_classes = num_classes
         self._model = None
         self._checkpoint_path = checkpoint_path
 
@@ -43,10 +43,10 @@ class BertHandler:
         :return: None
         """
         try:
-            self._bert_layer = hub.KerasLayer(self._model_path, trainable=trainable)
+            self._bert_model = hub.KerasLayer(self._model_path, trainable=trainable, name="BERT")
 
-            vocab_file = self._bert_layer.resolved_object.vocab_file.asset_path.numpy()
-            do_lower_case = self._bert_layer.resolved_object.do_lower_case.numpy()
+            vocab_file = self._bert_model.resolved_object.vocab_file.asset_path.numpy()
+            do_lower_case = self._bert_model.resolved_object.do_lower_case.numpy()
             self._tokenizer = tokenization.FullTokenizer(vocab_file, do_lower_case)
 
         except Exception as e:
@@ -60,10 +60,15 @@ class BertHandler:
         tokens.append('[SEP]')
         return self._tokenizer.convert_tokens_to_ids(tokens)
 
-    def convert_ids_to_categorical(self, ids):
+    def get_feature_from_ids(self, data, num_classes):
         """TODO descrizione"""
 
-        return tf.keras.utils.to_categorical(y=ids, num_classes=self._num_classes)
+        feature = np.zeros(shape=(len(data), num_classes), dtype=np.bool)
+        for idx, id in enumerate(data):
+            if id is not None:
+                feature[idx, id] = True
+
+        return tf.constant(feature)
 
     def encode(self, data):
         """
@@ -95,21 +100,21 @@ class BertHandler:
 
         :return: object
         """
-        return self._bert_layer
+        return self._bert_model
 
-    def build_custom_model(self):
+    def build_custom_model(self, num_keywords, output_classes):
         """
         TODO commenti e logs
-        :param num_classes:
         :return:
         """
         # Model definition
-        input_word_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="input_word_ids")
+        input_word_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32,
+                                               name="input_word_ids")
         input_mask = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="input_mask")
         segment_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="segment_ids")
-        keywords_ids = tf.keras.layers.Input(shape=(6,), name='keywords_ids')
+        keywords_ids = tf.keras.layers.Input(shape=(num_keywords, ), name='keywords_ids')
 
-        pooled_output, sequence_output  = self._bert_layer([input_word_ids, input_mask, segment_ids])
+        pooled_output, sequence_output = self._bert_model([input_word_ids, input_mask, segment_ids])
         bert_output = tf.keras.layers.Flatten(name="bert_pooled_output_flatten")(pooled_output)
 
         hidden = tf.concat([bert_output, keywords_ids], -1)
@@ -119,19 +124,26 @@ class BertHandler:
         hidden = tf.keras.layers.Dense(256, activation=tf.nn.relu, name='dense_2')(hidden)
         hidden = tf.keras.layers.BatchNormalization(name='batch_norm_2')(hidden)
         hidden = tf.keras.layers.Dropout(0.5)(hidden)
-        output = tf.keras.layers.Dense(self._num_classes, activation=tf.nn.softmax, name='output')(hidden)
+        output = tf.keras.layers.Dense(output_classes, activation=tf.nn.softmax, name='output')(hidden)
 
-        self._model  = tf.keras.Model([input_word_ids, input_mask, segment_ids, keywords_ids], output, name="FAQ_classifier")
-        self._model .summary()
-        self._model .compile(loss='categorical_crossentropy', optimizer=tf.optimizers.Adam(lr=0.00001), metrics=['accuracy'])
+        self._model = tf.keras.Model(
+            [input_word_ids, input_mask, segment_ids, keywords_ids],
+            output,
+            name=self.model_name
+        )
+        self._model.summary()
+        self._model.compile(
+            loss='categorical_crossentropy',
+            optimizer=tf.optimizers.Adam(lr=0.00001),
+            metrics=['accuracy'])
 
         if self._plot_path is not None:
             tf.keras.utils.plot_model(
-                self._model , to_file=self._plot_path, show_shapes=False, show_layer_names=True,
+                self._model, to_file=self._plot_path, show_shapes=True, show_layer_names=True,
                 rankdir='TB', expand_nested=False, dpi=96
             )
 
-    def train(self, X_train, y_train, X_val, y_val, epochs = 200, load_checkpoint = False):
+    def train(self, X_train, y_train, X_val, y_val, epochs=200, load_checkpoint=False):
         """
         TODO: descrizione
         :return:
