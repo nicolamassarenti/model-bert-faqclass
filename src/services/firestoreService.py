@@ -1,6 +1,5 @@
 import firebase_admin
 import logging
-from firebase_admin import credentials
 from firebase_admin import firestore
 
 logger = logging.getLogger(__name__)
@@ -44,3 +43,12 @@ class FirestoreService:
             data.append(doc.to_dict())
 
         return data
+
+    def add(self, collection, data):
+        """
+        TODO: aggiungere commenti e log
+        :param collection:
+        :param data:
+        :return:
+        """
+        self.__db.collection(collection).add(data)
