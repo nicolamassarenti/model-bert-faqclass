@@ -15,10 +15,12 @@ class DatasetHandler:
                  val_split=0.1):
         """
         Initializes the DatasetHandler object
-        TODO: aggiornare  i param
-        :param database_service: (object) the object that connects to the database
-        :param knowledge_base_collection: (string) the name of the KB collection
-        :param keywords_collection: (string) the name of the keywords collection
+
+        :param database_service: the service that connects to the database
+        :param knowledge_base_collection: the name of the collection that contains the knowledge base
+        :param keywords_collection: the name of the collection that contains the keywords
+        :param train_split: percentage of the training data
+        :param val_split: percentage of the validation data
         """
         if knowledge_base_collection is None:
             message = "knowledge_base_collection is None"
@@ -35,7 +37,7 @@ class DatasetHandler:
         self._keywords_collection = keywords_collection
         self._keywords = []
         self._num_classes_keywords = 0
-        self._num_classes_faqs = 0
+        self._num_classes_kb = 0
         self._regex = r'(\s|\.|\')({})(\s|\n|\.|[?!-])'
 
         self._train_split = train_split
@@ -44,6 +46,7 @@ class DatasetHandler:
     def _get_examples_from_faq(self, faq):
         """
         Given an faq returns a list with the examples associated to the faq
+
         :param faq: the faq
         :return: list of string with the training examples
         """
@@ -64,17 +67,18 @@ class DatasetHandler:
         label = 0
         for faq in data:
             examples = self._get_examples_from_faq(faq)
-            example_label_pairs += list(map(lambda x: {"X": x, "Y": label}, examples))
+            example_label_pairs += list(map(lambda x: {"x": x, "y": label}, examples))
             label += 1
 
         return example_label_pairs
 
     def _get_keyword_id(self, text):
         """
-        TODO: mettere descrizione
-        :param text:
-        :param keywords:
-        :return:
+        Given a text, if a keyword is inside the text, it returns the position of the keyword inside the vector of
+        keywords, otherwise, if no keyword is inside the text, returns None.
+
+        :param text: the text
+        :return: None OR integer from [0:len(keywords)]
         """
         text = text.lower()
 
@@ -84,116 +88,128 @@ class DatasetHandler:
 
         return None
 
-    def _get_examples_keywords_labels(self, data):
+    def _get_examples_keywords_labels(self, dataset):
         """
-        TODO: mettere descrizione
-        :param keywords:
-        :param data:
+        For each example in the dataset, returns the example, the keyword id and the label associated to the example.
+        
+        :param dataset: the dataset
+        :return: list of training examples, list of keywords ids, list of labels
+        """
+        x_train, x_keywords, y = [], [], []
+        for example in dataset:
+            keyword_id = self._get_keyword_id(example["x"])
+            x_train.append(example["x"])
+            x_keywords.append(keyword_id)
+            y.append(example["y"])
+
+        return x_train, x_keywords, y
+
+    def _shuffle(self, x_text, x_keys, y):
+        """
+        Shuffles the data, keeping the indexes the same among the three data.
+
+        :param x_text: list of training examples
+        :param x_keys: list of keywords ids
+        :param y: list of labels
         :return:
         """
-        X_train, X_keywords, Y = [], [], []
-        for example in data:
-            keyword_id = self._get_keyword_id(example["X"])
-            X_train.append(example["X"])
-            X_keywords.append(keyword_id)
-            Y.append(example["Y"])
-
-        return X_train, X_keywords, Y
-
-    def _shuffle_and_convert_to_np_array(self, X_text, X_keys, Y):
-        """
-        TODO: mettere descrizione
-        :param X_text:
-        :param X_keys:
-        :param Y:
-        :return:
-        """
-        X_text = np.array(X_text)
-        X_keys = np.array(X_keys)
-        Y = np.array(Y)
-        indices = np.arange(X_text.shape[0])
+        x_text = np.array(x_text)
+        x_keys = np.array(x_keys)
+        y = np.array(y)
+        indices = np.arange(x_text.shape[0])
         np.random.shuffle(indices)
 
-        X_text = X_text[indices].tolist()
-        X_keys = X_keys[indices].tolist()
-        Y = Y[indices].tolist()
+        x_text = x_text[indices].tolist()
+        x_keys = x_keys[indices].tolist()
+        y = y[indices].tolist()
 
-        return X_text, X_keys, Y
+        return x_text, x_keys, y
 
 
     def get_data(self):
         """
-        Returns the data (..... TODO: mettere descrizione)
-        :return:
+        Returns the data examples, keyword ids and labels shuffled.
         """
 
         # TODO: mettere qualche log sia di info sia di debug
         kb = self._database_service.get_all_data(self._knowledge_base_collection)
+        logger.info("Retrived the kb.")
         keywords = self._database_service.get_all_data(self._keywords_collection)
+        logger.info("Retrieved the keywords")
 
+        # Getting only the DisplayText field and making all the keywords lowercase
         self._keywords = list(map(lambda x : x["DisplayText"].lower(), keywords))
 
+        # Getting the label associated to each examples
         training_examples_and_labels = self._get_example_label_pairs(data=kb)
-        X_faqs, X_keywords, Y = self._get_examples_keywords_labels(
-            data=training_examples_and_labels
+        x_kb, x_keywords, y = self._get_examples_keywords_labels(
+            dataset=training_examples_and_labels
         )
 
-        X_faqs, X_keywords, Y = self._shuffle_and_convert_to_np_array(
-            X_text=X_faqs,
-            X_keys=X_keywords,
-            Y=Y
+        # Shuffling keeping consistency between examples and labels
+        x_kb, x_keywords, y = self._shuffle(
+            x_text=x_kb,
+            x_keys=x_keywords,
+            y=y
         )
+        logger.info("Obtained the faqs examples, the keyword ids and the labels.")
 
-        classes_keywords = set(X_keywords)
+        classes_keywords = set(x_keywords)
         classes_keywords.remove(None)
         self._num_classes_keywords = len(classes_keywords)
-        self._num_classes_faqs = len(kb)
+        self._num_classes_kb = len(kb)
+        logger.info("Number of KB classes: {}".format(self._num_classes_kb))
+        logger.info("Number of keywords classes: {}".format(self._num_classes_keywords))
 
-        return {"faqs": X_faqs, "keywords_ids": X_keywords}, Y
+        return {"kb": x_kb, "keywords_ids": x_keywords}, y
 
-    def get_train_validation_test_sets(self, X, Y):
+    def get_train_validation_test_sets(self, x, y):
         """
-        TODO: descrizione + logs
-        :param X:
-        :param Y:
+        Divides the data and labels into train, validation and test sets.
+        :param x: examples
+        :param y: labels
         :return:
         """
-        num_examples = len(X["faqs"])
+        num_examples = len(x["kb"])
 
         limit_train = round(self._train_split * num_examples)
         limit_val = round(self._val_split * num_examples)
 
-        X_faqs = X["faqs"]
-        X_keywords_ids = X["keywords_ids"]
+        x_kb = x["kb"]
+        x_keywords_ids = x["keywords_ids"]
 
         # Train
-        X_train = {
-            "faqs": X_faqs[:limit_train],
-            "keywords_ids": X_keywords_ids[:limit_train]
+        x_train = {
+            "kb": x_kb[:limit_train],
+            "keywords_ids": x_keywords_ids[:limit_train]
         }
-        Y_train = Y[:limit_train]
+        y_train = y[:limit_train]
 
         # Validation
-        X_val = {
-            "faqs": X_faqs[limit_train:limit_train + limit_val],
-            "keywords_ids": X_keywords_ids[limit_train:limit_train + limit_val]
+        x_val = {
+            "kb": x_kb[limit_train:limit_train + limit_val],
+            "keywords_ids": x_keywords_ids[limit_train:limit_train + limit_val]
         }
-        Y_val = Y[limit_train:limit_train + limit_val]
+        y_val = y[limit_train:limit_train + limit_val]
 
         # Test
-        X_test = {
-            "faqs": X_faqs[limit_train + limit_val:],
-            "keywords_ids": X_keywords_ids[limit_train + limit_val:]
+        x_test = {
+            "kb": x_kb[limit_train + limit_val:],
+            "keywords_ids": x_keywords_ids[limit_train + limit_val:]
         }
-        Y_test = Y[min(num_examples, limit_train + limit_val):]
+        y_test = y[min(num_examples, limit_train + limit_val):]
 
-        return X_train, Y_train, X_val, Y_val, X_test, Y_test
+        return x_train, y_train, x_val, y_val, x_test, y_test
 
     def get_num_classes_keywords(self):
-        """TODO: commento"""
+        """
+        Returns the number of keywords.
+        """
         return self._num_classes_keywords
 
-    def get_num_classes_faqs(self):
-        """TODO: commento"""
-        return self._num_classes_faqs
+    def get_num_classes_kb(self):
+        """
+        Returns the number of classes in the kb, i.e. the number of faqs
+        """
+        return self._num_classes_kb
 

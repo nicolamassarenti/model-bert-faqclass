@@ -30,7 +30,7 @@ if __name__ == "__main__":
     # Retrieving data
     X, Y = dataset_handler.get_data()
     num_classes_keywords = dataset_handler.get_num_classes_keywords()
-    num_classes_kb = dataset_handler.get_num_classes_faqs()
+    num_classes_kb = dataset_handler.get_num_classes_kb()
     logger.info("Dataset retrieved")
 
     # Splitting the dataset into train, validation and test sets
