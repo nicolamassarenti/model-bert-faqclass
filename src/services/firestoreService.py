@@ -25,6 +25,7 @@ class FirestoreService:
         firebase_admin.initialize_app()
 
         self.__db = firestore.client()
+        logger.info("Firestore client connected")
 
     def get_all_data(self, collection):
         """
@@ -39,16 +40,17 @@ class FirestoreService:
         collection_reference = self.__db.collection(collection)
 
         for doc in collection_reference.stream():
-            logging.debug(u"Retrieved doc with id: `{}`".format(doc.id))
+            logging.debug(u"Retrieved doc with id: `{}` from collection `{}`".format(doc.id, collection))
             data.append(doc.to_dict())
 
         return data
 
     def add(self, collection, data):
         """
-        TODO: aggiungere commenti e log
-        :param collection:
-        :param data:
-        :return:
+        Adds a document to the collection
+        :param collection: the collection
+        :param data: the document to add
+        :return: None
         """
         self.__db.collection(collection).add(data)
+        logger.info("Adding to collection `` document: {}".format(collection, data))
