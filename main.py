@@ -39,12 +39,12 @@ if __name__ == "__main__":
 
     # Running training
     train(
-        X_train=X_train,
-        Y_train=Y_train,
-        X_validation=X_val,
-        Y_validation=Y_val,
-        X_test=X_test,
-        Y_test=Y_test,
+        x_train=X_train,
+        y_train=Y_train,
+        x_validation=X_val,
+        y_validation=Y_val,
+        x_test=X_test,
+        y_test=Y_test,
         num_classes={"keywords": num_classes_keywords, "kb": num_classes_kb}
     )
     logger.info("Training executed.")
