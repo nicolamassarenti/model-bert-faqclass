@@ -29,10 +29,10 @@ def train(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, num_clas
     )
     logger.info("Bert handler successfully created")
 
-    X_train_encoded = bert_handler.encode(X_train["faqs"])
-    X_validation_encoded = bert_handler.encode(X_validation["faqs"])
-    X_test_encoded = bert_handler.encode(X_test["faqs"])
-    logger.info("Encoding executed.")
+    X_train_encoded = bert_handler.encode(X_train["kb"])
+    X_validation_encoded = bert_handler.encode(X_validation["kb"])
+    X_test_encoded = bert_handler.encode(X_test["kb"])
+    logger.info("Encoding executed")
 
     X_train_encoded["keywords_ids"] = bert_handler.get_feature_from_ids(
         data=X_train["keywords_ids"],
@@ -48,7 +48,7 @@ def train(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, num_clas
     )
     logger.info("Keywords ids converted to categorical.")
 
-    bert_handler.build_custom_model(num_keywords=num_classes["keywords"], output_classes=num_classes["faqs"])
+    bert_handler.build_custom_model(num_keywords=num_classes["keywords"], output_classes=num_classes["kb"])
     logger.info("Model built.")
 
     X_train = [
@@ -57,7 +57,7 @@ def train(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, num_clas
         X_train_encoded["input_type_ids"],
         X_train_encoded["keywords_ids"]
     ]
-    Y_train = bert_handler.to_categorical_tensor(data=Y_train, num_classes=num_classes["faqs"])
+    Y_train = bert_handler.to_categorical_tensor(data=Y_train, num_classes=num_classes["kb"])
 
     X_val = [
         X_validation_encoded["input_word_ids"],
@@ -65,7 +65,7 @@ def train(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, num_clas
         X_validation_encoded["input_type_ids"],
         X_validation_encoded["keywords_ids"]
     ]
-    Y_val = bert_handler.to_categorical_tensor(data=Y_validation, num_classes=num_classes["faqs"])
+    Y_val = bert_handler.to_categorical_tensor(data=Y_validation, num_classes=num_classes["kb"])
     logger.info("Data prepared for training")
 
     logger.info("Starting training")

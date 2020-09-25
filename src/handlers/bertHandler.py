@@ -13,12 +13,16 @@ class BertHandler:
     def __init__(self, model_path, model_name="bert", model_version="default", max_sequence_length=128, plot_path=None,
                  checkpoint_path=None):
         """
-        The constructor of the handler.
+        Is the constuctor of the handler.
 
-        :param model_path: (string) the path where the model is stored
-        :param model_name: (string) the name of the model
-        :param model_version: (string) the version of the model
+        :param model_path: the url to download the model from tensorflow hub
+        :param model_name: the name of the model
+        :param model_version: the version of the model
+        :param max_sequence_length: the max sequence length accepted
+        :param plot_path: True if to plot the model
+        :param checkpoint_path: the path to the model
         """
+
         if model_path is None:
             raise Exception("model_path is None")
 
@@ -38,7 +42,7 @@ class BertHandler:
     def _init_bert_layer(self, trainable=False):
         """
         Creates the bert layer
-        TODO: aggiornare guida e mettere log
+
         :param trainable: (bool) true if you want to re-train the layer via transfer learning
         :return: None
         """
@@ -56,26 +60,46 @@ class BertHandler:
             raise e
 
     def _encode_sentence(self, s):
+        """
+        Encodes the sentence as required by BERT
+
+        :param s: the sentence
+        :return: the tokenized sentence
+        """
+        # Tokenizing the sentence
         tokens = list(self._tokenizer.tokenize(s))
+
+        # Adding `[SEP]` at the end of the sentence as required by BERT
         tokens.append('[SEP]')
+
+        # Converting tokens to ids
         tokens = self._tokenizer.convert_tokens_to_ids(tokens)
-        # TODO: spiegare che è padding e -1 per il [CLS] che metto dopo
+
+        # Padding the vector of ids with zeros up to a length=max_sequence_length - 1, where -1 because `[CLS]` will be
+        # added later
         return tokens + [0] * (self._max_sequence_length - len(tokens) - 1)
 
     def get_feature_from_ids(self, data, num_classes):
-        """TODO descrizione"""
+        """
+        Returns the features given the ids of the keywords
+        :param data: the vector of ids
+        :param num_classes: number of keywords
+        :return:
+        """
 
         feature = np.zeros(shape=(len(data), num_classes), dtype=np.bool)
-        for idx, id in enumerate(data):
-            if id is not None:
-                feature[idx, id] = True
+        for idx, keyword_id in enumerate(data):
+            if keyword_id is not None:
+                feature[idx, keyword_id] = True
 
         return tf.constant(feature)
 
     def encode(self, data):
         """
-        TODO: descrizione
-        :param data:
+        Encodes the vector of sentences as requred by BERT: ['CLS'] + token + ['SEP'], then converts the padded token
+        vector to ids and computes the input mask and the input type id.
+
+        :param data: the dataset
         :return:
         """
         encoded_data = tf.ragged.constant([self._encode_sentence(s) for s in np.array(data)])
@@ -86,8 +110,8 @@ class BertHandler:
         input_mask = tf.ones_like(input_word_ids).to_tensor()
         input_word_ids = input_word_ids.to_tensor()
 
-        type_cls = tf.zeros_like(cls)
-        type_data = tf.zeros_like(encoded_data)
+        type_cls = tf.ones_like(cls)
+        type_data = tf.ones_like(encoded_data)
         input_type_ids = tf.concat([type_cls, type_data], axis=-1).to_tensor()
 
         inputs = {
@@ -107,8 +131,11 @@ class BertHandler:
 
     def build_custom_model(self, num_keywords, output_classes):
         """
-        TODO commenti e logs
-        :return:
+        Builds the custom model
+
+        :param num_keywords: number of keywords
+        :param output_classes: number of output classes
+        :return: None
         """
         # Model definition
         input_word_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="input_word_ids")
@@ -137,10 +164,13 @@ class BertHandler:
             name=self.model_name
         )
         self._model.summary()
+        logger.info("Model defined")
+
         self._model.compile(
             loss='categorical_crossentropy',
             optimizer=tf.optimizers.Adam(lr=0.00001),
             metrics=['accuracy'])
+        logger.info("Model compiled")
 
         if self._plot_path is not None:
             tf.keras.utils.plot_model(
@@ -150,8 +180,14 @@ class BertHandler:
 
     def train(self, X_train, y_train, X_val, y_val, epochs=200, load_checkpoint=False):
         """
-        TODO: descrizione
-        :return:
+        Trains the model
+        :param X_train: the training set
+        :param y_train: the training labels
+        :param X_val: the validation set
+        :param y_val: the validation labels
+        :param epochs: number of epochs
+        :param load_checkpoint: True if to load from checkpoint
+        :return: None
         """
         callbacks = []
         if self._checkpoint_path is not None:
@@ -183,9 +219,10 @@ class BertHandler:
 
     def to_categorical_tensor(self, data, num_classes):
         """
-        TODO: commenti
+        Converts the data to a categorical tensor
+
         :param data:
-        :param num_classes:
+        :param num_classes: the number of classes
         :return:
         """
         return tf.keras.utils.to_categorical(y=data, num_classes=num_classes)
