@@ -58,7 +58,9 @@ class BertHandler:
     def _encode_sentence(self, s):
         tokens = list(self._tokenizer.tokenize(s))
         tokens.append('[SEP]')
-        return self._tokenizer.convert_tokens_to_ids(tokens)
+        tokens = self._tokenizer.convert_tokens_to_ids(tokens)
+        # TODO: spiegare che è padding e -1 per il [CLS] che metto dopo
+        return tokens + [0] * (self._max_sequence_length - len(tokens) - 1)
 
     def get_feature_from_ids(self, data, num_classes):
         """TODO descrizione"""
@@ -82,13 +84,14 @@ class BertHandler:
         input_word_ids = tf.concat([cls, encoded_data], axis=-1)
 
         input_mask = tf.ones_like(input_word_ids).to_tensor()
+        input_word_ids = input_word_ids.to_tensor()
 
         type_cls = tf.zeros_like(cls)
         type_data = tf.zeros_like(encoded_data)
         input_type_ids = tf.concat([type_cls, type_data], axis=-1).to_tensor()
 
         inputs = {
-            'input_word_ids': input_word_ids.to_tensor(),
+            'input_word_ids': input_word_ids,
             'input_mask': input_mask,
             'input_type_ids': input_type_ids}
 
@@ -108,8 +111,7 @@ class BertHandler:
         :return:
         """
         # Model definition
-        input_word_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32,
-                                               name="input_word_ids")
+        input_word_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="input_word_ids")
         input_mask = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="input_mask")
         segment_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="segment_ids")
         keywords_ids = tf.keras.layers.Input(shape=(num_keywords, ), name='keywords_ids')
@@ -118,17 +120,20 @@ class BertHandler:
         bert_output = tf.keras.layers.Flatten(name="bert_pooled_output_flatten")(pooled_output)
 
         hidden = tf.concat([bert_output, keywords_ids], -1)
-        hidden = tf.keras.layers.Dense(256, activation=tf.nn.relu, name='dense_1')(hidden)
+        hidden = tf.keras.layers.Dense(100, activation=tf.nn.relu, name='dense_1')(hidden)
         hidden = tf.keras.layers.BatchNormalization(name='batch_norm_1')(hidden)
         hidden = tf.keras.layers.Dropout(0.5)(hidden)
-        hidden = tf.keras.layers.Dense(256, activation=tf.nn.relu, name='dense_2')(hidden)
+        hidden = tf.keras.layers.Dense(100, activation=tf.nn.relu, name='dense_2')(hidden)
         hidden = tf.keras.layers.BatchNormalization(name='batch_norm_2')(hidden)
+        hidden = tf.keras.layers.Dropout(0.5)(hidden)
+        hidden = tf.keras.layers.Dense(50, activation=tf.nn.relu, name='dense_3')(hidden)
+        hidden = tf.keras.layers.BatchNormalization(name='batch_norm_3')(hidden)
         hidden = tf.keras.layers.Dropout(0.5)(hidden)
         output = tf.keras.layers.Dense(output_classes, activation=tf.nn.softmax, name='output')(hidden)
 
         self._model = tf.keras.Model(
-            [input_word_ids, input_mask, segment_ids, keywords_ids],
-            output,
+            inputs=[input_word_ids, input_mask, segment_ids, keywords_ids],
+            outputs=output,
             name=self.model_name
         )
         self._model.summary()
@@ -140,7 +145,7 @@ class BertHandler:
         if self._plot_path is not None:
             tf.keras.utils.plot_model(
                 self._model, to_file=self._plot_path, show_shapes=True, show_layer_names=True,
-                rankdir='TB', expand_nested=False, dpi=96
+                rankdir='TB', expand_nested=True, dpi=96
             )
 
     def train(self, X_train, y_train, X_val, y_val, epochs=200, load_checkpoint=False):
@@ -149,16 +154,21 @@ class BertHandler:
         :return:
         """
         callbacks = []
-        if self._checkpoint_path is not None and load_checkpoint:
+        if self._checkpoint_path is not None:
             cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self._checkpoint_path,
                                                              save_weights_only=True,
-                                                             verbose=1)
+                                                             verbose=1,
+                                                             save_freq=10)
             callbacks = [cp_callback]
+
+        if self._checkpoint_path is not None and load_checkpoint:
+            self._model.load_weights(self._checkpoint_path)
 
         early_stopping = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
             verbose=1,
-            mode='auto'
+            mode='auto',
+            patience=10
         )
         callbacks.append(early_stopping)
 
@@ -170,3 +180,12 @@ class BertHandler:
             verbose=1,
             callbacks=callbacks
         )
+
+    def to_categorical_tensor(self, data, num_classes):
+        """
+        TODO: commenti
+        :param data:
+        :param num_classes:
+        :return:
+        """
+        return tf.keras.utils.to_categorical(y=data, num_classes=num_classes)

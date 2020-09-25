@@ -1,5 +1,5 @@
 # My ignores
-models/
+model/
 .idea
 old/
 auth/
