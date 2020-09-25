@@ -27,6 +27,16 @@ class FirestoreService:
         self.__db = firestore.client()
         logger.info("Firestore client connected")
 
+    def add(self, collection, data):
+        """
+        Adds a document to the collection
+        :param collection: the collection
+        :param data: the document to add
+        :return: None
+        """
+        self.__db.collection(collection).add(data)
+        logger.info("Adding to collection `` document: {}".format(collection, data))
+
     def get_all_data(self, collection):
         """
         Retrieves all the data from a specific `collection`
@@ -44,13 +54,3 @@ class FirestoreService:
             data.append(doc.to_dict())
 
         return data
-
-    def add(self, collection, data):
-        """
-        Adds a document to the collection
-        :param collection: the collection
-        :param data: the document to add
-        :return: None
-        """
-        self.__db.collection(collection).add(data)
-        logger.info("Adding to collection `` document: {}".format(collection, data))
