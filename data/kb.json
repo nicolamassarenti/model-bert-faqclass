@@ -2,7 +2,7 @@
 	"KB": [
 		{
 			"IsTrained": true,
-			"MainExample": "Come cambio il nome utente?",
+			"MainExample": "How do I change my username?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -82,7 +82,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Come cambio la password?",
+			"MainExample": "How do I change my password?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -156,7 +156,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Posso aggiungere un utenza al mio account?",
+			"MainExample": "Can I add a user to my account?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -245,7 +245,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Come modifico la mail associata al mio account?",
+			"MainExample": "How do I change the email associated with my account?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -324,7 +324,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Come gestisco le notifiche?",
+			"MainExample": "How do I manage notifications?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -408,7 +408,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Posso eliminare un'utenza dal mio account?",
+			"MainExample": "Can I delete a user from my account?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -487,7 +487,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Come posso creare un report con i miei dati?",
+			"MainExample": "How can I create a report with my data?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -571,7 +571,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Posso cercare un documento filtrando per proprietà?",
+			"MainExample": "Can I search for a document by filtering by property?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -650,7 +650,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Come modifico le informazioni per la fatturazione?",
+			"MainExample": "How do I change my billing information?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -729,7 +729,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Dove trovo il codice XRT?",
+			"MainExample": "Where do I find the XRT code?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -808,7 +808,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Dove si scaricano le fatture?",
+			"MainExample": "How can I download the invoices?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -882,7 +882,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Dove si modifica l'APN?",
+			"MainExample": "How do I change the APN?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -956,7 +956,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Posso modificare i codici IRTES?",
+			"MainExample": "Can I change the IRTES codes?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
@@ -1025,7 +1025,7 @@
 		},
 		{
 			"IsTrained": true,
-			"MainExample": "Che cos'è il PTOPT?",
+			"MainExample": "What is PTOPT?",
 			"TrainingExamples":[
 				{
 					"Language":"it",
