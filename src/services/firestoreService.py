@@ -35,7 +35,7 @@ class FirestoreService:
         :return: None
         """
         self.__db.collection(collection).add(data)
-        logger.info("Adding to collection `` document: {}".format(collection, data))
+        logger.info("Adding to collection `{}` document: {}".format(collection, data))
 
     def get_all_data(self, collection):
         """
@@ -54,3 +54,11 @@ class FirestoreService:
             data.append(doc.to_dict())
 
         return data
+
+    def empty_collection(self, collection):
+        # Querying for the documents
+        collection_reference = self.__db.collection(collection)
+
+        for doc in collection_reference.stream():
+            self.__db.collection(collection).document(doc.id).delete()
+            logger.info("Deleted from collection `{}` document: {}".format(collection, doc.id))
