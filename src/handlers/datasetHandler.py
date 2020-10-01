@@ -137,6 +137,11 @@ class DatasetHandler:
         keywords = self._database_service.get_all_data(self._keywords_collection)
         logger.info("Retrieved the keywords")
 
+        self._num_classes_keywords = len(keywords)
+        self._num_classes_kb = len(kb)
+        logger.info("Number of KB classes: {}".format(self._num_classes_kb))
+        logger.info("Number of keywords classes: {}".format(self._num_classes_keywords))
+
         # Getting only the DisplayText field and making all the keywords lowercase
         self._keywords = list(map(lambda x : x["DisplayText"].lower(), keywords))
 
@@ -153,13 +158,6 @@ class DatasetHandler:
             y=y
         )
         logger.info("Obtained the faqs examples, the keyword ids and the labels.")
-
-        classes_keywords = set(x_keywords)
-        classes_keywords.remove(None)
-        self._num_classes_keywords = len(classes_keywords)
-        self._num_classes_kb = len(kb)
-        logger.info("Number of KB classes: {}".format(self._num_classes_kb))
-        logger.info("Number of keywords classes: {}".format(self._num_classes_keywords))
 
         return {"kb": x_kb, "keywords_ids": x_keywords}, y
 

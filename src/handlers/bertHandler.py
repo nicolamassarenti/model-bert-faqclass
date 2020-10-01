@@ -144,17 +144,16 @@ class BertHandler:
         keywords_ids = tf.keras.layers.Input(shape=(num_keywords, ), name='keywords_ids')
 
         pooled_output, sequence_output = self._bert_model([input_word_ids, input_mask, segment_ids])
-        bert_output = tf.keras.layers.Flatten(name="bert_pooled_output_flatten")(pooled_output)
+        bert_output = tf.keras.layers.Lambda(lambda x: x[:, 0, :], name='extract_CLS', output_shape=(None, 768))(
+            sequence_output)  # extract representation of [CLS] token
+        # bert_output = tf.keras.layers.Flatten(name="bert_pooled_output_flatten")(pooled_output)
 
         hidden = tf.concat([bert_output, keywords_ids], -1)
-        hidden = tf.keras.layers.Dense(100, activation=tf.nn.relu, name='dense_1')(hidden)
+        hidden = tf.keras.layers.Dense(256, activation=tf.nn.relu, name='dense_1')(hidden)
         hidden = tf.keras.layers.BatchNormalization(name='batch_norm_1')(hidden)
         hidden = tf.keras.layers.Dropout(0.5)(hidden)
-        hidden = tf.keras.layers.Dense(100, activation=tf.nn.relu, name='dense_2')(hidden)
+        hidden = tf.keras.layers.Dense(256, activation=tf.nn.relu, name='dense_2')(hidden)
         hidden = tf.keras.layers.BatchNormalization(name='batch_norm_2')(hidden)
-        hidden = tf.keras.layers.Dropout(0.5)(hidden)
-        hidden = tf.keras.layers.Dense(50, activation=tf.nn.relu, name='dense_3')(hidden)
-        hidden = tf.keras.layers.BatchNormalization(name='batch_norm_3')(hidden)
         hidden = tf.keras.layers.Dropout(0.5)(hidden)
         output = tf.keras.layers.Dense(output_classes, activation=tf.nn.softmax, name='output')(hidden)
 
@@ -194,7 +193,7 @@ class BertHandler:
             cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self._checkpoint_path,
                                                              save_weights_only=True,
                                                              verbose=1,
-                                                             save_freq=10)
+                                                             save_freq=50)
             callbacks = [cp_callback]
 
         if self._checkpoint_path is not None and load_checkpoint:
@@ -204,7 +203,7 @@ class BertHandler:
             monitor='val_loss',
             verbose=1,
             mode='auto',
-            patience=10
+            patience=100
         )
         callbacks.append(early_stopping)
 

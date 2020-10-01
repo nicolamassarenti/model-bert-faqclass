@@ -2,7 +2,7 @@ import logging
 import os
 
 from settings import settings
-from src.training import train
+from src.training_local import train
 from src.services.firestoreService import FirestoreService
 from src.handlers.datasetHandler import DatasetHandler
 
