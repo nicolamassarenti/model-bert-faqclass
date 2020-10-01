@@ -2,7 +2,7 @@ import logging
 import traceback
 import tensorflow as tf
 import tensorflow_hub as hub
-import src.handlers.tokenization as tokenization
+import trainer.handlers.tokenization as tokenization
 import numpy as np
 
 logger = logging.getLogger(__name__)

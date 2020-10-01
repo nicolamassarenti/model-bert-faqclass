@@ -3,7 +3,7 @@ import datetime
 from datetime import timezone
 import os
 from settings import settings
-from src.services.firestoreService import FirestoreService
+from trainer.services.firestoreService import FirestoreService
 
 if __name__ == "__main__":
     settings()
