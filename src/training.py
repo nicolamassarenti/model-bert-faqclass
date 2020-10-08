@@ -1,7 +1,7 @@
 import logging
 import os
 
-from trainer.handlers.bertHandler import BertHandler
+from src.handlers.bertHandler import BertHandler
 
 logger = logging.getLogger(__name__)
 

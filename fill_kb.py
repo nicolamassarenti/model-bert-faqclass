@@ -2,8 +2,8 @@ import json
 import datetime
 from datetime import timezone
 import os
-from trainer.settings import settings
-from trainer.services.firestoreService import FirestoreService
+from src.settings import settings
+from src.services.firestoreService import FirestoreService
 
 if __name__ == "__main__":
     settings()

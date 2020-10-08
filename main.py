@@ -1,10 +1,10 @@
 import logging
 import os
 
-from trainer.settings import settings
-from trainer.training import train
-from trainer.services.firestoreService import FirestoreService
-from trainer.handlers.datasetHandler import DatasetHandler
+from src.settings import settings
+from src.training import train
+from src.services.firestoreService import FirestoreService
+from src.handlers.datasetHandler import DatasetHandler
 
 logger = logging.getLogger(__name__)
 
