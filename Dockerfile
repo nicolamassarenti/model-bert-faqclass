@@ -1,13 +1,25 @@
 # Install the nightly version of tensorflow
 FROM tensorflow/tensorflow:nightly
-WORKDIR /root
 
 # Install requirements
-COPY requirements.txt /root/
-RUN pip install -r requirements.txt
+COPY requirements.txt /app/
+RUN pip install -r /app/requirements.txt
 
 # Copies the src code to the docker image.
-COPY . ./
+COPY src /app/src/
+COPY auth /app/auth/
+COPY .env /app/
+COPY config /app/config/
+
+RUN mkdir /app/output
+RUN mkdir /app/model
+RUN mkdir /app/logs
+RUN ls -lah /app/
+RUN ls -lah /app/src/
+
+ENV PYTHONPATH="/app/"
+
+WORKDIR /app
 
 # Set up the entry point to invoke the src.
-ENTRYPOINT ["python", "trainer/task.py"]
+ENTRYPOINT ["python", "./src/main.py"]

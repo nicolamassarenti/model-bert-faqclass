@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class BertHandler:
 
     def __init__(self, model_path, model_name="bert", model_version="default", max_sequence_length=128, plot_path=None,
-                 checkpoint_path=None):
+                 checkpoint_path=None, plot_model=False):
         """
         Is the constuctor of the handler.
 
@@ -33,7 +33,8 @@ class BertHandler:
         self._bert_model = None
         self._tokenizer = None
         self._max_sequence_length = max_sequence_length
-        self._plot_path = plot_path
+        if plot_model:
+            self._plot_path = plot_path
         self._model = None
         self._checkpoint_path = checkpoint_path
 

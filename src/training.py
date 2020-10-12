@@ -26,7 +26,8 @@ def train(x_train, y_train, x_validation, y_validation, x_test, y_test, num_clas
         model_version=os.getenv("MODEL_VERSION"),
         max_sequence_length=int(os.getenv("MAX_SEQ_LENGTH")),
         plot_path=os.getenv("PATH_MODEL_PLOT"),
-        checkpoint_path=os.getenv("PATH_MODEL_CHECKPOINT")
+        checkpoint_path=os.getenv("PATH_MODEL_CHECKPOINT"),
+        plot_model=bool(os.getenv("PLOT_MODEL"))
     )
     logger.info("Bert handler successfully created")
 
