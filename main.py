@@ -1,5 +1,6 @@
 import logging
 import os
+import argparse
 
 from src.settings import settings
 from src.training import train
@@ -9,6 +10,43 @@ from src.handlers.datasetHandler import DatasetHandler
 logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser("bert-faqclass")
+    parser.add_argument("--google_application_credential",
+                        help="Path to the service account", type=str)
+    parser.add_argument("--bert_url",
+                        help="Tensorflow hub url to download bert model.", type=str)
+    parser.add_argument("--model_checkpoint_path",
+                        help="Path to the folder with the model checkpoints.", type=str)
+    parser.add_argument("--logs_config_path",
+                        help="Path to the logs config file.", type=str)
+
+    args = parser.parse_args()
+
+    print(args.google_application_credential)
+    print(args.bert_url)
+    print(args.model_checkpoint_path)
+    print(args.logs_config_path)
+
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = args.google_application_credential
+    os.environ["PATH_BERT_MODEL"] = args.bert_url
+    os.environ["PATH_MODEL_CHECKPOINT"] = args.model_checkpoint_path
+    os.environ["PATH_LOGS_CONFIG"] = args.logs_config_path
+
+
+    os.environ["MODEL_NAME"] = "bert-faqclass"
+    os.environ["MODEL_VERSION"] = "0.0.2"
+
+    os.environ["MODEL_TRAINING_EPOCHS"] = "1000"
+    os.environ["MODEL_TRAINING_SET_PERCENTAGE"] = "0.7"
+    os.environ["MODEL_VALIDATION_SET_PERCENTAGE"] = "0.2"
+    os.environ["MAX_SEQ_LENGTH"] = "128"
+
+    os.environ["PLOT_MODEL"] = "False"
+
+    os.environ["FIRESTORE_COLLECTION_KB"] = "KnowledgeBase"
+    os.environ["FIRESTORE_COLLECTION_KEYWORDS"] = "Keywords"
+
+
 
     settings()
     logger.info("Settings set up correctly")
