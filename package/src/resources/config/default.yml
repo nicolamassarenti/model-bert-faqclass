@@ -1,0 +1,53 @@
+gcloud:
+  project: "bert-faqclass"
+
+  database:
+    type: "Firestore" #Google Cloud Firestore
+
+    collections:
+      knowledge_base:
+        name: "KnowledgeBase"
+        description: "Contains the set of faqs"
+      keywords:
+        name: "Keywords"
+        description: "Contains the keywords"
+
+  storage:
+    prefix: "gs://"
+
+    model:
+      checkpoints:
+        bucket: "model_bert_faqclass"
+        folders: "checkpoints/checkpoint"
+
+      tensorboard:
+        bucket: "model_bert_faqclass"
+        folders: "tensorboard"
+
+      model_savings:
+        bucket: "model_bert_faqclass"
+        folders: "model"
+########################################################################################################################
+model:
+  name: "model-bert-faqclass"
+  version: "0.0.3"
+
+  bert:
+    url: "https://tfhub.dev/tensorflow/bert_multi_cased_L-12_H-768_A-12/2" # Url to download the model
+
+  inputs:
+    max_sequence_length: 128 # Max length of the input strings
+
+  training:
+    epochs: 1000
+    batch_size: 32
+
+    early_stopping: True
+    tensorboard: True
+    checkpoints: True
+
+    split_percentages:
+      train: 0.6
+      validation: 0.2
+      test: 0.2
+########################################################################################################################

@@ -1,0 +1,46 @@
+version: 1
+disable_existing_loggers: True
+
+formatters:
+    standard:
+        format: "%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)s - %(funcName)8s() ] %(message)s"
+        datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+    console:
+        class: logging.StreamHandler
+        formatter: standard
+        level: INFO
+        stream: ext://sys.stdout
+    debug_rotating_file_handler:
+        level: DEBUG
+        formatter: standard
+        class: logging.handlers.RotatingFileHandler
+        filename: debug.log
+        mode: a
+        maxBytes: 1048576
+        backupCount: 10
+    error_file_handler: 
+        level: WARNING
+        formatter: standard
+        class: logging.FileHandler
+        filename: error.log
+        mode: a
+    critical_mail_handler:
+        level: CRITICAL
+        formatter: standard
+        class: logging.handlers.SMTPHandler
+        mailhost: localhost
+        fromaddr: model-bert-faqclass@training.com
+        toaddrs: [ nicola.massarenti@gmail.com ]
+        subject: Critical error with application name
+
+loggers:
+    package:
+        level: WARNING
+        propagate: no
+        handlers: [console, debug_rotating_file_handler, error_file_handler, critical_mail_handler]
+        
+root:
+    level: DEBUG
+    handlers: [console, debug_rotating_file_handler, error_file_handler, critical_mail_handler]
