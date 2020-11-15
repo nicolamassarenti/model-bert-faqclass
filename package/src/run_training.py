@@ -55,7 +55,7 @@ def run_training():
     logger.debug("Dataset is x: `{x}`, y: `{y}`".format(x=x, y=y))
 
     # Splitting the dataset into train, validation and test sets
-    X_train, Y_train, X_val, Y_val, X_test, Y_test = dataset_handler.get_train_validation_test_sets(
+    x_train, y_train, x_val, y_val, x_test, y_test = dataset_handler.get_train_validation_test_sets(
         x=x,
         y=y,
         train_split=train_split,
@@ -63,10 +63,16 @@ def run_training():
         test_split=test_split
     )
     logger.info("Dataset split into train, validation and test sets.")
+    logger.debug("x_train: `{x_train}'".format(x_train=x_train))
+    logger.debug("y_train: `{y_train}'".format(y_train=y_train))
+    logger.debug("x_val: `{x_val}'".format(x_val=x_val))
+    logger.debug("y_val: `{y_val}'".format(y_val=y_val))
+    logger.debug("x_test: `{x_test}'".format(x_test=x_test))
+    logger.debug("y_test: `{y_test}'".format(y_test=y_test))
 
     # Running training
     train(
-        x_train=X_train,
+        x_train=x_train,
         y_train=Y_train,
         x_validation=X_val,
         y_validation=Y_val,
