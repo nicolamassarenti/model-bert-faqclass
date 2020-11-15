@@ -46,7 +46,7 @@ model:
     tensorboard: True
     checkpoints: True
 
-    split_percentages:
+    split:
       train: 0.6
       validation: 0.2
       test: 0.2
