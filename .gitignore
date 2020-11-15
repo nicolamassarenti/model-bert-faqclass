@@ -1,9 +1,10 @@
 # My ignores
-model/
+package/src/resources/model/
+data/*
 .idea
 old/
 auth/
-output/
+package/src/resources/output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
