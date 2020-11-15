@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 def run_training():
+    ####################################################################################################################
     # Constants
+    ####################################################################################################################
     knowledge_base_collection = config.gcloud.database.collections.knowledge_base.name
     logger.info("Knowledge base collection: {name}".format(name=knowledge_base_collection))
     keywords_collection = config.gcloud.database.collections.keywords.name
@@ -73,8 +75,9 @@ def run_training():
     batch_size = int(config.model.training.batch_size)
     logger.info("Batch size: {batch_size}".format(batch_size=batch_size))
 
-
+    ####################################################################################################################
     # Services and handlers
+    ####################################################################################################################
     database_service = FirestoreService()
     logger.info("Database service set-up done")
 
@@ -94,7 +97,9 @@ def run_training():
     )
     logger.info("Model handler set-up done.")
 
+    ####################################################################################################################
     # Retrieving data
+    ####################################################################################################################
     logger.info("Starting to retrieve data from database service")
     kb = database_service.get_all_data(knowledge_base_collection)
     logger.info("Retrieved knowledge base")
@@ -111,6 +116,9 @@ def run_training():
     keywords = dataset_handler.get_keywords_from_raw_data(keywords)
     logger.info("Processed the keywords from raw data. Keywords are {keywords}".format(keywords=keywords))
 
+    ####################################################################################################################
+    # Preparing training, validation and test sets
+    ####################################################################################################################
     x, y = dataset_handler.get_examples_and_labels(kb=kb, keywords=keywords)
     logger.info("Dataset retrieved")
     logger.debug("Dataset is x: `{x}`, y: `{y}`".format(x=x, y=y))
@@ -158,6 +166,9 @@ def run_training():
     )
     logger.info("Obtained features tensor with ids for test examples")
 
+    ####################################################################################################################
+    # Building model
+    ####################################################################################################################
     bert_handler.build_custom_model(
         num_keywords=num_keywords,
         output_classes=num_faqs
@@ -183,6 +194,9 @@ def run_training():
     y_val = bert_handler.to_categorical_tensor(data=y_val, num_classes=num_faqs)
     logger.info("Validation labels categorical tensor created")
 
+    ####################################################################################################################
+    # Training
+    ####################################################################################################################
     logger.info("Starting training")
     bert_handler.train(
         X_train=x_train,
