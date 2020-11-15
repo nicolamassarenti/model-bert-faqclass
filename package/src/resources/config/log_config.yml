@@ -12,11 +12,18 @@ handlers:
         formatter: standard
         level: INFO
         stream: ext://sys.stdout
+    info_rotating_file_handler:
+        level: INFO
+        formatter: standard
+        class: logging.handlers.RotatingFileHandler
+        filename: logs/info.log
+        mode: a
+        maxBytes: 1048576
     debug_rotating_file_handler:
         level: DEBUG
         formatter: standard
         class: logging.handlers.RotatingFileHandler
-        filename: debug.log
+        filename: logs/debug.log
         mode: a
         maxBytes: 1048576
         backupCount: 10
@@ -24,23 +31,15 @@ handlers:
         level: WARNING
         formatter: standard
         class: logging.FileHandler
-        filename: error.log
+        filename: logs/error.log
         mode: a
-    critical_mail_handler:
-        level: CRITICAL
-        formatter: standard
-        class: logging.handlers.SMTPHandler
-        mailhost: localhost
-        fromaddr: model-bert-faqclass@training.com
-        toaddrs: [ nicola.massarenti@gmail.com ]
-        subject: Critical error with application name
 
 loggers:
     package:
         level: WARNING
         propagate: no
-        handlers: [console, debug_rotating_file_handler, error_file_handler, critical_mail_handler]
+        handlers: [console, debug_rotating_file_handler, error_file_handler]
         
 root:
     level: DEBUG
-    handlers: [console, debug_rotating_file_handler, error_file_handler, critical_mail_handler]
+    handlers: [console, debug_rotating_file_handler, info_rotating_file_handler, error_file_handler]
