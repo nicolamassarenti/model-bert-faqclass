@@ -17,7 +17,8 @@ bucket_name = args.bucket_name
 bucket_folder = args.bucket_folder
 
 local_files = [
-    "/home/nicolamassarenti/Documents/Progetti/bert-faqclass/model-bert-faqclass/config/log_config.ini"
+    "/home/nicolamassarenti/Documents/Progetti/bert-faqclass/model-bert-faqclass/config/log_config.ini",
+    "/home/nicolamassarenti/Documents/Progetti/bert-faqclass/model-bert-faqclass/.env"
 ]
 
 

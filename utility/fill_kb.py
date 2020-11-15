@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     service = FirestoreService()
 
-    with open('data/kb.json') as f:
+    with open('../package/src/resources/data/kb.json') as f:
         data = json.load(f)
 
     # Removing all content of KB_COLLECTION and inserting new data
