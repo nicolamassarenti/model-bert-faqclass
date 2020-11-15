@@ -8,10 +8,15 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-class BertHandler:
+class ModelWrapper:
 
-    def __init__(self, model_path, model_name="bert", model_version="default", max_sequence_length=128, plot_path=None,
-                 checkpoint_path=None, plot_model=False):
+    def __init__(self,
+                 base_model_url: str = None,
+                 checkpoint_location: str = None,
+                 model_name: str = "bert-faqclass",
+                 model_version: str = "1.0.0",
+                 max_sequence_length: int = 128
+                 ):
         """
         Is the constuctor of the handler.
 
@@ -20,27 +25,28 @@ class BertHandler:
         :param model_version: the version of the model
         :param max_sequence_length: the max sequence length accepted
         :param plot_path: True if to plot the model
-        :param checkpoint_path: the path to the model
+        :param checkpoint_location: the path to the model
         """
 
-        if model_path is None:
-            raise Exception("model_path is None")
+        if base_model_url is None:
+            error_message = "Url to download the base model has not been provided"
+            logger.critical(error_message)
+            exit(1)
 
-        self._model_path = model_path
         self.model_version = model_version
         self.model_name = model_name
-        self._params = None
-        self._bert_model = None
-        self._tokenizer = None
+
+        self._base_model_url = base_model_url
         self._max_sequence_length = max_sequence_length
-        if plot_model:
-            self._plot_path = plot_path
+        self._checkpoint_location = checkpoint_location
+
+        self._base_model = None
+        self._tokenizer = None
         self._model = None
-        self._checkpoint_path = checkpoint_path
 
         self._init_bert_layer(trainable=False)
 
-    def _init_bert_layer(self, trainable=False):
+    def _init_bert_layer(self, trainable: bool = False):
         """
         Creates the bert layer
 
@@ -48,17 +54,18 @@ class BertHandler:
         :return: None
         """
         try:
-            self._bert_model = hub.KerasLayer(self._model_path, trainable=trainable, name="BERT")
+            self._base_model = hub.KerasLayer(self._base_model_url, trainable=trainable, name="BERT")
+            logger.debug("Downloaded base model from {url}".format(url=self._base_model_url))
 
-            vocab_file = self._bert_model.resolved_object.vocab_file.asset_path.numpy()
-            do_lower_case = self._bert_model.resolved_object.do_lower_case.numpy()
+            vocab_file = self._base_model.resolved_object.vocab_file.asset_path.numpy()
+            do_lower_case = self._base_model.resolved_object.do_lower_case.numpy()
             self._tokenizer = tokenization.FullTokenizer(vocab_file, do_lower_case)
+            logger.debug("Tokenizer built")
 
         except Exception as e:
             stacktrace = traceback.format_exc()
-
-            logger.error("{}".format(stacktrace))
-            raise e
+            logger.critical("{}".format(stacktrace))
+            exit(1)
 
     def _encode_sentence(self, s):
         """
@@ -80,22 +87,22 @@ class BertHandler:
         # added later
         return tokens + [0] * (self._max_sequence_length - len(tokens) - 1)
 
-    def get_feature_from_ids(self, data, num_classes):
+    def get_features_tensor_from_ids(self, ids: [int], num_classes: int) -> tf.Tensor:
         """
         Returns the features given the ids of the keywords
-        :param data: the vector of ids
+        :param ids: the vector of ids
         :param num_classes: number of keywords
         :return:
         """
 
-        feature = np.zeros(shape=(len(data), num_classes), dtype=np.bool)
-        for idx, keyword_id in enumerate(data):
+        features = np.zeros(shape=(len(ids), num_classes), dtype=np.bool)
+        for idx, keyword_id in enumerate(ids):
             if keyword_id is not None:
-                feature[idx, keyword_id] = True
+                features[idx, keyword_id] = True
 
-        return tf.constant(feature)
+        return tf.constant(features)
 
-    def encode(self, data):
+    def encode(self, data: [str]) -> dict:
         """
         Encodes the vector of sentences as requred by BERT: ['CLS'] + token + ['SEP'], then converts the padded token
         vector to ids and computes the input mask and the input type id.
@@ -115,12 +122,12 @@ class BertHandler:
         type_data = tf.ones_like(encoded_data)
         input_type_ids = tf.concat([type_cls, type_data], axis=-1).to_tensor()
 
-        inputs = {
+        encoded_inputs = {
             'input_word_ids': input_word_ids,
             'input_mask': input_mask,
             'input_type_ids': input_type_ids}
 
-        return inputs
+        return encoded_inputs
 
     def get_bert_layer(self):
         """
@@ -128,9 +135,9 @@ class BertHandler:
 
         :return: object
         """
-        return self._bert_model
+        return self._base_model
 
-    def build_custom_model(self, num_keywords, output_classes):
+    def build_custom_model(self, num_keywords: int, output_classes: int):
         """
         Builds the custom model
 
@@ -144,7 +151,7 @@ class BertHandler:
         segment_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="segment_ids")
         keywords_ids = tf.keras.layers.Input(shape=(num_keywords, ), name='keywords_ids')
 
-        pooled_output, sequence_output = self._bert_model([input_word_ids, input_mask, segment_ids])
+        pooled_output, sequence_output = self._base_model([input_word_ids, input_mask, segment_ids])
         bert_output = tf.keras.layers.Lambda(lambda x: x[:, 0, :], name='extract_CLS', output_shape=(None, 768))(
             sequence_output)  # extract representation of [CLS] token
         # bert_output = tf.keras.layers.Flatten(name="bert_pooled_output_flatten")(pooled_output)
@@ -164,21 +171,22 @@ class BertHandler:
             name=self.model_name
         )
         self._model.summary()
-        logger.info("Model defined")
+        logger.debug("Model defined")
 
         self._model.compile(
             loss='categorical_crossentropy',
-            optimizer=tf.optimizers.Adam(lr=0.00001),
-            metrics=['accuracy'])
-        logger.info("Model compiled")
+            optimizer=tf.optimizers.Adam(),
+            metrics=['accuracy']
+        )
+        logger.debug("Model compiled")
 
-        if self._plot_path is not None:
-            tf.keras.utils.plot_model(
-                self._model, to_file=self._plot_path, show_shapes=True, show_layer_names=True,
-                rankdir='TB', expand_nested=True, dpi=96
-            )
-
-    def train(self, X_train, y_train, X_val, y_val, epochs=200, load_checkpoint=False):
+    def train(self,
+              X_train: [tf.Tensor],
+              y_train: [np.array],
+              X_val: [tf.Tensor],
+              y_val: [np.array],
+              epochs: int = 200,
+              load_checkpoint: bool =False):
         """
         Trains the model
         :param X_train: the training set
@@ -190,21 +198,22 @@ class BertHandler:
         :return: None
         """
         callbacks = []
-        if self._checkpoint_path is not None:
-            cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self._checkpoint_path,
-                                                             save_weights_only=True,
-                                                             verbose=1,
-                                                             save_freq=50)
+        if self._checkpoint_location is not None:
+            cp_callback = tf.keras.callbacks.ModelCheckpoint(
+                filepath=self._checkpoint_location,
+                save_weights_only=True,
+                verbose=1
+            )
             callbacks = [cp_callback]
 
-        if self._checkpoint_path is not None and load_checkpoint:
-            self._model.load_weights(self._checkpoint_path)
+        if self._checkpoint_location is not None and load_checkpoint:
+            self._model.load_weights(self._checkpoint_location)
 
         early_stopping = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
             verbose=1,
             mode='auto',
-            patience=100
+            patience=int(round(epochs) * 0.1)
         )
         callbacks.append(early_stopping)
 
@@ -217,7 +226,7 @@ class BertHandler:
             callbacks=callbacks
         )
 
-    def to_categorical_tensor(self, data, num_classes):
+    def to_categorical_tensor(self, data: [int], num_classes: int) -> np.array:
         """
         Converts the data to a categorical tensor
 

@@ -40,11 +40,12 @@ model:
 
   training:
     epochs: 1000
-    batch_size: 32
+    batch_size: 16
 
-    early_stopping: True
-    tensorboard: True
-    checkpoints: True
+    load_checkpoints: False
+
+    is_tensorboard_enabled: True
+    is_checkpoints_enabled: True
 
     split:
       train: 0.6
