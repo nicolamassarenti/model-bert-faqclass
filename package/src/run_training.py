@@ -73,11 +73,11 @@ def run_training():
     # Running training
     train(
         x_train=x_train,
-        y_train=Y_train,
-        x_validation=X_val,
-        y_validation=Y_val,
-        x_test=X_test,
-        y_test=Y_test,
+        y_train=y_train,
+        x_validation=x_val,
+        y_validation=y_val,
+        x_test=x_test,
+        y_test=y_test,
         num_classes={"keywords": num_classes_keywords, "kb": num_classes_kb}
     )
     logger.info("Training executed.")
