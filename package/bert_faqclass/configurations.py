@@ -2,7 +2,7 @@ import os
 import yaml
 from box import Box
 
-from src import CONFIG_LOCATION
+from bert_faqclass import CONFIG_LOCATION
 
 
 def _get_config_dict(name: str) -> dict:

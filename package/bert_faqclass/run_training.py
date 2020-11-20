@@ -1,11 +1,11 @@
 import logging
 import os
 
-from src.training import train
-from src.configurations import config
-from src.services.firestoreService import FirestoreService
-from src.handlers.datasetHandler import DatasetHandler
-from src.handlers.modelWrapper import ModelWrapper
+from bert_faqclass.training import train
+from bert_faqclass.configurations import config
+from bert_faqclass.services.firestoreService import FirestoreService
+from bert_faqclass.handlers.datasetHandler import DatasetHandler
+from bert_faqclass.handlers.modelWrapper import ModelWrapper
 
 
 logger = logging.getLogger(__name__)
