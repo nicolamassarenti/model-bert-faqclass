@@ -1,6 +1,5 @@
-import firebase_admin
 import logging
-from firebase_admin import firestore
+from bert_faqclass.connectors.gcloud.firestore.client import connector
 
 logger = logging.getLogger(__name__)
 
@@ -12,20 +11,7 @@ class FirestoreService:
 
         :return None
         """
-        self.__db = None
-
-        self._connect_to_db()
-
-    def _connect_to_db(self):
-        """
-        Creates the connection to Firestore
-
-        :return: None
-        """
-        firebase_admin.initialize_app()
-
-        self.__db = firestore.client()
-        logger.info("Firestore client connected")
+        self.__db = connector
 
     def add(self, collection: str, data: dict):
         """

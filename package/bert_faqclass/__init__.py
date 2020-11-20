@@ -15,4 +15,6 @@ def _get_config_dict(name: str):
 def _init_logger():
 	log_config = _get_config_dict("log_config")
 	logging.config.dictConfig(log_config)
+
+
 _init_logger()

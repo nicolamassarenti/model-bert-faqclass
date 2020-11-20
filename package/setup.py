@@ -8,7 +8,7 @@ setup(
     description='Bert-faqclass application package',
     packages=find_packages(),
     install_requires=[
-        "python-dotenv>=0.14.0"
+        
     ],
     include_package_data=True,
     package_data={'model-bert-faqclass': ['.env']}
