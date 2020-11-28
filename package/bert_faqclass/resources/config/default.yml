@@ -15,7 +15,7 @@ gcloud:
   storage:
     prefix: "gs://"
 
-    model:
+    locations:
       checkpoints:
         bucket: "model_bert_faqclass"
         folders: "checkpoints/checkpoint"
