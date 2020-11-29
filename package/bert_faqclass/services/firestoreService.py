@@ -5,13 +5,6 @@ logger = logging.getLogger(__name__)
 
 
 class FirestoreService:
-    def __init__(self):
-        """
-        Creates the service that connects to Firestore
-
-        :return None
-        """
-        self.__db = connector
 
     def add(self, collection: str, data: dict):
         """
@@ -20,7 +13,7 @@ class FirestoreService:
         :param data: the document to add
         :return: None
         """
-        self.__db.collection(collection).add(data)
+        connector.collection(collection).add(data)
         logger.info("Adding to collection `{}` document: {}".format(collection, data))
 
     def get_all_data(self, collection: str) -> [dict]:
@@ -33,7 +26,7 @@ class FirestoreService:
         data = []
 
         # Querying for the documents
-        collection_reference = self.__db.collection(collection)
+        collection_reference = connector.collection(collection)
 
         for doc in collection_reference.stream():
             logging.debug(u"Retrieved doc with id: `{}` from collection `{}`".format(doc.id, collection))
@@ -43,8 +36,8 @@ class FirestoreService:
 
     def empty_collection(self, collection: str):
         # Querying for the documents
-        collection_reference = self.__db.collection(collection)
+        collection_reference = connector.collection(collection)
 
         for doc in collection_reference.stream():
-            self.__db.collection(collection).document(doc.id).delete()
+            connector.collection(collection).document(doc.id).delete()
             logger.info("Deleted from collection `{}` document: {}".format(collection, doc.id))
