@@ -2,7 +2,9 @@ import logging
 import os
 
 from bert_faqclass.configurations import config
+from bert_faqclass.connectors.gcloud.storage.locations import StorageLocations
 from bert_faqclass.connectors.gcloud.firestore.client import connector as firestore_connector
+from bert_faqclass.connectors.gcloud.firestore.collections import FirestoreCollections
 from bert_faqclass.handlers.datasetHandler import DatasetHandler
 from bert_faqclass.handlers.modelWrapper import ModelWrapper
 
@@ -14,10 +16,8 @@ def run_training():
     ####################################################################################################################
     # Constants
     ####################################################################################################################
-    knowledge_base_collection = config.gcloud.database.collections.knowledge_base.name
-    logger.info("Knowledge base collection: {name}".format(name=knowledge_base_collection))
-    keywords_collection = config.gcloud.database.collections.keywords.name
-    logger.info("Keywords collection: {name}".format(name=keywords_collection))
+    logger.info("Knowledge base collection: {name}".format(name=FirestoreCollections.KNOWLEDGE_BASE))
+    logger.info("Keywords collection: {name}".format(name=FirestoreCollections.KEYWORDS))
 
     train_split = float(config.model.training.split.train)
     validation_split = float(config.model.training.split.validation)
@@ -99,9 +99,9 @@ def run_training():
     # Retrieving data
     ####################################################################################################################
     logger.info("Starting to retrieve data from database service")
-    kb = firestore_connector.get_all_data(knowledge_base_collection)
+    kb = firestore_connector.get_all_data(FirestoreCollections.KNOWLEDGE_BASE)
     logger.info("Retrieved knowledge base")
-    keywords = firestore_connector.get_all_data(keywords_collection)
+    keywords = firestore_connector.get_all_data(FirestoreCollections.KEYWORDS)
     logger.info("Retrieved keywords")
     logger.info("Data retrieved")
 

@@ -7,10 +7,8 @@ gcloud:
     collections:
       knowledge_base:
         name: "KnowledgeBase"
-        description: "Contains the set of faqs"
       keywords:
         name: "Keywords"
-        description: "Contains the keywords"
 
   storage:
     prefix: "gs://"

@@ -25,7 +25,6 @@ class CollectionsConfig:
 class CollectionDetails:
     def __init__(self, conf: dict):
         self.name = conf["name"]
-        self.description = conf["description"]
 
 
 ########################################################################################################################
