@@ -1,9 +1,8 @@
 import logging
 import os
 
-from bert_faqclass.training import train
 from bert_faqclass.configurations import config
-from bert_faqclass.services.firestoreService import FirestoreService
+from bert_faqclass.connectors.gcloud.firestore.client import connector as firestore_connector
 from bert_faqclass.handlers.datasetHandler import DatasetHandler
 from bert_faqclass.handlers.modelWrapper import ModelWrapper
 
@@ -78,7 +77,6 @@ def run_training():
     ####################################################################################################################
     # Services and handlers
     ####################################################################################################################
-    database_service = FirestoreService()
     logger.info("Database service set-up done")
 
     dataset_handler = DatasetHandler(
@@ -101,9 +99,9 @@ def run_training():
     # Retrieving data
     ####################################################################################################################
     logger.info("Starting to retrieve data from database service")
-    kb = database_service.get_all_data(knowledge_base_collection)
+    kb = firestore_connector.get_all_data(knowledge_base_collection)
     logger.info("Retrieved knowledge base")
-    keywords = database_service.get_all_data(keywords_collection)
+    keywords = firestore_connector.get_all_data(keywords_collection)
     logger.info("Retrieved keywords")
     logger.info("Data retrieved")
 
