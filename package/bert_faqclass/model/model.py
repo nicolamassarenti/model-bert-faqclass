@@ -152,8 +152,9 @@ class Model:
         keywords_ids = tf.keras.layers.Input(shape=(num_keywords, ), name='keywords_ids')
 
         pooled_output, sequence_output = self._base_model([input_word_ids, input_mask, segment_ids])
-        bert_output = tf.keras.layers.Lambda(lambda x: x[:, 0, :], name='extract_CLS', output_shape=(None, 768))(
-            sequence_output)  # extract representation of [CLS] token
+        bert_output = tf.keras.layers.Lambda(
+            lambda x: x[:, 0, :], name='extract_CLS', output_shape=(None, 768)
+        )(sequence_output)  # extract representation of [CLS] token
         # bert_output = tf.keras.layers.Flatten(name="bert_pooled_output_flatten")(pooled_output)
 
         hidden = tf.concat([bert_output, keywords_ids], -1)
