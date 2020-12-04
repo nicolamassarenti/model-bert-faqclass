@@ -8,7 +8,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-class ModelWrapper:
+class Model:
 
     def __init__(self,
                  base_model_url: str = None,

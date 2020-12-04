@@ -1,12 +1,11 @@
 import logging
-import os
 
 from bert_faqclass.configurations import config
 from bert_faqclass.connectors.gcloud.storage.locations import StorageLocations
 from bert_faqclass.connectors.gcloud.firestore.client import connector as firestore_connector
 from bert_faqclass.connectors.gcloud.firestore.collections import FirestoreCollections
 from bert_faqclass.handlers.datasetHandler import DatasetHandler
-from bert_faqclass.handlers.modelWrapper import ModelWrapper
+from bert_faqclass.model.modelWrapper import ModelWrapper
 
 
 logger = logging.getLogger(__name__)
@@ -16,12 +15,12 @@ def run_training():
     ####################################################################################################################
     # Constants
     ####################################################################################################################
-    logger.info("Knowledge base collection: {name}".format(name=FirestoreCollections.KNOWLEDGE_BASE))
-    logger.info("Keywords collection: {name}".format(name=FirestoreCollections.KEYWORDS))
+    logger.info("Knowledge base collection: {name}".format(name=FirestoreCollections.KNOWLEDGE_BASE.value))
+    logger.info("Keywords collection: {name}".format(name=FirestoreCollections.KEYWORDS.value))
 
-    train_split = float(config.model.training.split.train)
-    validation_split = float(config.model.training.split.validation)
-    test_split = float(config.model.training.split.test)
+    train_split = float(config["model"]["training"]["split"]["train"])
+    validation_split = float(config["model"]["training"]["split"]["validation"])
+    test_split = float(config["model"]["training"]["split"]["test"])
     logger.info("Train split: {split}".format(split=train_split))
     logger.info("Validation split: {split}".format(split=validation_split))
     logger.info("Test split: {split}".format(split=test_split))
@@ -29,49 +28,34 @@ def run_training():
         error_message = "Training splits configuration is inconsistent: train+validation+test != 1, sum is {sum}".format(sum=train_split + validation_split + test_split)
         logger.critical(error_message)
         exit(1)
-
-    model_savings_location = os.path.join(
-        config.gcloud.storage.prefix,
-        config.gcloud.storage.model.model_savings.bucket,
-        config.gcloud.storage.model.model_savings.folders
-    )
-    logger.info("Model savings location: {location}".format(location=model_savings_location))
-
-    is_tensorboard_enabled = config.model.training.is_tensorboard_enabled
-    tensorboard_location = os.path.join(
-        config.gcloud.storage.prefix,
-        config.gcloud.storage.model.tensorboard.bucket,
-        config.gcloud.storage.model.tensorboard.folders
-    )
+        
+    logger.info("Model savings location: {location}".format(location=StorageLocations.MODEL.complete_path))
+    
+    is_tensorboard_enabled = config["model"]["training"]["is_tensorboard_enabled"]
     logger.info("Tensorboard location: {location}. Enablement option set to {option}".format(
-        location=tensorboard_location,
+        location=StorageLocations.TENSORBOARD.complete_path,
         option=is_tensorboard_enabled
     ))
-    load_checkpoints = config.model.training.load_checkpoints
+    load_checkpoints = config["model"]["training"]["load_checkpoints"]
     logging.info("Load checkpoint option set to {option}".format(option=load_checkpoints))
-    is_checkpoint_enabled = config.model.training.is_checkpoints_enabled
-    checkpoints_location = os.path.join(
-        config.gcloud.storage.prefix,
-        config.gcloud.storage.model.checkpoints.bucket,
-        config.gcloud.storage.model.checkpoints.folders
-    )
+    is_checkpoint_enabled = config["model"]["training"]["is_checkpoints_enabled"]
     logger.info("Checkpoints location: {location}. Enablement option set to {option}".format(
-        location=checkpoints_location,
+        location=StorageLocations.CHECKPOINTS.complete_path,
         option=is_checkpoint_enabled
     ))
 
-    bert_url = config.model.bert.url
+    bert_url = config["model"]["bert"]["url"]
     logger.info("Bert url: {url}".format(url=bert_url))
 
-    model_name = config.model.name
-    model_version = config.model.version
+    model_name = config["model"]["name"]
+    model_version = config["model"]["version"]
     logger.info("Model name: {name}, versione: {version}".format(name=model_name, version=model_version))
 
-    max_sequence_length = int(round(config.model.inputs.max_sequence_length))
+    max_sequence_length = int(round(config["model"]["inputs"]["max_sequence_length"]))
     logger.info("Max sequence length: {length}".format(length=max_sequence_length))
-    num_epochs = int(config.model.training.epochs)
+    num_epochs = int(config["model"]["training"]["epochs"])
     logger.info("Epochs: {epochs}".format(epochs=num_epochs))
-    batch_size = int(config.model.training.batch_size)
+    batch_size = int(config["model"]["training"]["batch_size"])
     logger.info("Batch size: {batch_size}".format(batch_size=batch_size))
 
     ####################################################################################################################
@@ -88,7 +72,7 @@ def run_training():
 
     bert_handler = ModelWrapper(
         base_model_url=bert_url,
-        checkpoint_location=checkpoints_location,
+        checkpoint_location=StorageLocations.CHECKPOINTS.complete_path,
         model_name=model_name,
         model_version=model_version,
         max_sequence_length=max_sequence_length,
@@ -99,9 +83,9 @@ def run_training():
     # Retrieving data
     ####################################################################################################################
     logger.info("Starting to retrieve data from database service")
-    kb = firestore_connector.get_all_data(FirestoreCollections.KNOWLEDGE_BASE)
+    kb = firestore_connector.get_all_data(FirestoreCollections.KNOWLEDGE_BASE.value)
     logger.info("Retrieved knowledge base")
-    keywords = firestore_connector.get_all_data(FirestoreCollections.KEYWORDS)
+    keywords = firestore_connector.get_all_data(FirestoreCollections.KEYWORDS.value)
     logger.info("Retrieved keywords")
     logger.info("Data retrieved")
 
