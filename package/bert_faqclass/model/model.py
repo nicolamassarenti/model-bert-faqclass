@@ -2,7 +2,7 @@ import logging
 import traceback
 import tensorflow as tf
 import tensorflow_hub as hub
-import bert_faqclass.handlers.tokenization as tokenization
+import bert_faqclass.model.tokenization as tokenization
 import numpy as np
 
 logger = logging.getLogger(__name__)
