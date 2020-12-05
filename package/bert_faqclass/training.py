@@ -11,7 +11,7 @@ from bert_faqclass.model.model import Model
 logger = logging.getLogger(__name__)
 
 
-def run_training():
+def run():
     ####################################################################################################################
     # Constants
     ####################################################################################################################
@@ -196,4 +196,4 @@ def run_training():
     logger.info("Model saved.")
 
 if __name__ == "__main__":
-    run_training()
+    run()
