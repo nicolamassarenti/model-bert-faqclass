@@ -1,8 +1,8 @@
-from bert_faqclass import run_training
+from bert_faqclass import training
 
 
 def main():
-    run_training.run()
+    training.run()
 
 
 if __name__ == "__main__":
