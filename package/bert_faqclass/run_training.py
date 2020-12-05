@@ -5,7 +5,7 @@ from bert_faqclass.connectors.gcloud.storage.locations import StorageLocations
 from bert_faqclass.connectors.gcloud.firestore.client import connector as firestore_connector
 from bert_faqclass.connectors.gcloud.firestore.collections import FirestoreCollections
 from bert_faqclass.handlers.datasetHandler import DatasetHandler
-from bert_faqclass.model.modelWrapper import ModelWrapper
+from bert_faqclass.model.model import Model
 
 
 logger = logging.getLogger(__name__)
@@ -70,12 +70,13 @@ def run_training():
     )
     logger.info("Dataset handler set-up done")
 
-    bert_handler = ModelWrapper(
+    model = Model(
         base_model_url=bert_url,
         checkpoint_location=StorageLocations.CHECKPOINTS.complete_path,
+        fine_tuned_model_location=StorageLocations.MODEL.complete_path,
         model_name=model_name,
         model_version=model_version,
-        max_sequence_length=max_sequence_length,
+        max_sequence_length=max_sequence_length
     )
     logger.info("Model handler set-up done.")
 
@@ -122,27 +123,27 @@ def run_training():
     logger.debug("y_test: `{y_test}'".format(y_test=y_test))
 
     # Encoding the faq examples
-    x_train_encoded = bert_handler.encode(x_train["kb"])
+    x_train_encoded = model.encode(x_train["kb"])
     logger.info("Encoded knowledge base training set")
 
-    x_validation_encoded = bert_handler.encode(x_val["kb"])
+    x_validation_encoded = model.encode(x_val["kb"])
     logger.info("Encoded knowledge base validation set")
 
-    x_test_encoded = bert_handler.encode(x_test["kb"])
+    x_test_encoded = model.encode(x_test["kb"])
     logger.info("Encoded knowledge base test set")
 
     # Obtaining the feature vectors wrt the keywords ids associated to each example
-    x_train_encoded["keywords_ids"] = bert_handler.get_features_tensor_from_ids(
+    x_train_encoded["keywords_ids"] = model.get_features_tensor_from_ids(
         ids=x_train["keywords_ids"],
         num_classes=num_keywords
     )
     logger.info("Obtained features tensor with ids for training examples")
-    x_validation_encoded["keywords_ids"] = bert_handler.get_features_tensor_from_ids(
+    x_validation_encoded["keywords_ids"] = model.get_features_tensor_from_ids(
         ids=x_val["keywords_ids"],
         num_classes=num_keywords
     )
     logger.info("Obtained features tensor with ids for validation examples")
-    x_test_encoded["keywords_ids"] = bert_handler.get_features_tensor_from_ids(
+    x_test_encoded["keywords_ids"] = model.get_features_tensor_from_ids(
         ids=x_test["keywords_ids"],
         num_classes=num_keywords
     )
@@ -151,7 +152,7 @@ def run_training():
     ####################################################################################################################
     # Building model
     ####################################################################################################################
-    bert_handler.build_custom_model(
+    model.build_custom_model(
         num_keywords=num_keywords,
         output_classes=num_faqs
     )
@@ -164,7 +165,7 @@ def run_training():
         x_train_encoded["keywords_ids"]
     ]
     logger.info("Training inputs structured as required by the model to be valid inputs")
-    y_train = bert_handler.to_categorical_tensor(data=y_train, num_classes=num_faqs)
+    y_train = model.to_categorical_tensor(data=y_train, num_classes=num_faqs)
     logger.info("Training labels categorical tensor created")
     x_val = [
         x_validation_encoded["input_word_ids"],
@@ -173,14 +174,14 @@ def run_training():
         x_validation_encoded["keywords_ids"]
     ]
     logger.info("Validation inputs structured as required by the model to be valid inputs")
-    y_val = bert_handler.to_categorical_tensor(data=y_val, num_classes=num_faqs)
+    y_val = model.to_categorical_tensor(data=y_val, num_classes=num_faqs)
     logger.info("Validation labels categorical tensor created")
 
     ####################################################################################################################
     # Training
     ####################################################################################################################
     logger.info("Starting training")
-    bert_handler.train(
+    model.train(
         X_train=x_train,
         y_train=y_train,
         X_val=x_val,
@@ -190,6 +191,9 @@ def run_training():
     )
     logger.info("Training completed")
 
+    logger.info("Saving model at path {path}".format(path=StorageLocations.MODEL.complete_path))
+    model.save()
+    logger.info("Model saved.")
 
 if __name__ == "__main__":
     run_training()
