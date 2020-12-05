@@ -13,6 +13,7 @@ class Model:
     def __init__(self,
                  base_model_url: str = None,
                  checkpoint_location: str = None,
+                 fine_tuned_model_location: str = None,
                  model_name: str = "bert-faqclass",
                  model_version: str = "1.0.0",
                  max_sequence_length: int = 128
@@ -39,6 +40,7 @@ class Model:
         self._base_model_url = base_model_url
         self._max_sequence_length = max_sequence_length
         self._checkpoint_location = checkpoint_location
+        self.fine_tuned_model_location = fine_tuned_model_location
 
         self._base_model = None
         self._tokenizer = None
@@ -236,3 +238,6 @@ class Model:
         :return:
         """
         return tf.keras.utils.to_categorical(y=data, num_classes=num_classes)
+
+    def save(self):
+        self._model.save(self.fine_tuned_model_location)
