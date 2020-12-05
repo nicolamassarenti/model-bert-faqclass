@@ -6,8 +6,8 @@ TIMESTAMP=$(date +"%Y%m%dT%H%M%S")
 
 # VARIABLES
 MODEL_NAME="model_bert_faqclass"
-PACKAGE_PATH=./src
-MODULE_NAME=src.main
+PACKAGE_PATH=$(pwd)/package/
+MODULE_NAME=bert_faqclass.run_training.run
 
 STAGING_BUCKET="gs://$MODEL_NAME/"
 REGION="europe-west1"
@@ -26,9 +26,4 @@ gcloud ai-platform jobs submit training "$JOB_NAME" \
   --region "$REGION" \
   --python-version 3.7 \
   --runtime-version 2.2 \
-  --job-dir "$JOB_DIR" \
-  -- \
-  --google_application_credential="./auth/bert-faqclass-a96dec925432.json" \
-  --bert_url="https://tfhub.dev/tensorflow/bert_multi_cased_L-12_H-768_A-12/2" \
-  --model_checkpoint_path="./model/checkpoint"\
-  --logs_config_path="./config/log_config.ini"
+  --job-dir "$JOB_DIR"
