@@ -3,7 +3,7 @@ from setuptools import setup
 import os
 
 __this_location = os.path.abspath(os.path.realpath(__file__))
-REQUIREMENTS_LOCATION = os.path.join(__this_location, "requirements.txt")
+REQUIREMENTS_LOCATION = os.path.join(os.path.dirname(__this_location), "requirements.txt")
 
 # Function to retrieve resources files
 def _get_resources(package_name):
