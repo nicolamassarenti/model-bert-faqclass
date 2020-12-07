@@ -6,8 +6,8 @@ TIMESTAMP=$(date +"%Y%m%dT%H%M%S")
 
 # VARIABLES
 MODEL_NAME="model_bert_faqclass"
-PACKAGE_PATH=$(pwd)/package/
-MODULE_NAME=bert_faqclass.run_training.run
+PACKAGE_PATH=$(pwd)/package/bert_faqclass
+MODULE_NAME=bert_faqclass
 
 STAGING_BUCKET="gs://$MODEL_NAME/"
 REGION="europe-west1"
