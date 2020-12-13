@@ -1,1 +1,3 @@
 include requirements.txt
+include *.yml
+recursive-include *.yml
