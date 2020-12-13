@@ -2,13 +2,19 @@ import logging
 
 from firebase_admin import firestore
 import firebase_admin
+from firebase_admin import credentials
 
 logger = logging.getLogger(__name__)
 
 
 class StorageConnector:
     def __init__(self):
-        firebase_admin.initialize_app()
+        # Use the application default credentials
+        cred = credentials.ApplicationDefault()
+        firebase_admin.initialize_app(cred, {
+            'projectId': "bert-faqclass",
+        })
+        # firebase_admin.initialize_app()
         self.__db = firestore.client()
 
     def add(self, collection: str, data: dict):
