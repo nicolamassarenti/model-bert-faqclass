@@ -215,8 +215,7 @@ class Model:
         early_stopping = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
             verbose=1,
-            mode='auto',
-            patience=int(round(epochs) * 0.1)
+            mode='auto'
         )
         callbacks.append(early_stopping)
 
