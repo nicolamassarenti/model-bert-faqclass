@@ -12,6 +12,7 @@ class Model:
 
     def __init__(self,
                  base_model_url: str = None,
+                 preprocessor_url: str = None,
                  checkpoint_location: str = None,
                  fine_tuned_model_location: str = None,
                  model_name: str = "bert-faqclass",
@@ -38,6 +39,7 @@ class Model:
         self.model_name = model_name
 
         self._base_model_url = base_model_url
+        self._preprocessor_url = preprocessor_url
         self._max_sequence_length = max_sequence_length
         self._checkpoint_location = checkpoint_location
         self.fine_tuned_model_location = fine_tuned_model_location

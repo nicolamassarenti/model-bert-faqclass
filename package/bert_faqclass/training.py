@@ -46,6 +46,8 @@ def run():
 
     bert_url = config["model"]["bert"]["url"]
     logger.info("Bert url: {url}".format(url=bert_url))
+    preprocessor_url = config["model"]["preprocessor"]["url"]
+    logger.info("Preprocessor url: {url}".format(url=preprocessor_url))
 
     model_name = config["model"]["name"]
     model_version = config["model"]["version"]
@@ -72,6 +74,7 @@ def run():
 
     model = Model(
         base_model_url=bert_url,
+        preprocessor_url=preprocessor_url,
         checkpoint_location=StorageLocations.CHECKPOINTS.complete_path,
         fine_tuned_model_location=StorageLocations.MODEL.complete_path,
         model_name=model_name,

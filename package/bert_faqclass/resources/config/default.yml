@@ -31,7 +31,9 @@ model:
   version: "0.0.3"
 
   bert:
-    url: "https://tfhub.dev/tensorflow/bert_multi_cased_L-12_H-768_A-12/2" # Url to download the model
+    url: "https://tfhub.dev/tensorflow/bert_multi_cased_L-12_H-768_A-12/3"
+  preprocessor:
+    url: "https://tfhub.dev/tensorflow/bert_multi_cased_preprocess/1"
 
   inputs:
     max_sequence_length: 128 # Max length of the input strings
