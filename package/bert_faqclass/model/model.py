@@ -2,8 +2,8 @@ import logging
 import traceback
 import tensorflow as tf
 import tensorflow_hub as hub
-import bert_faqclass.model.tokenization as tokenization
 import numpy as np
+import tensorflow_text as text  # Registers the ops.
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,6 @@ class Model:
         self.fine_tuned_model_location = fine_tuned_model_location
 
         self._base_model = None
-        self._tokenizer = None
         self._model = None
 
         self._init_bert_layer(trainable=False)
@@ -61,35 +60,13 @@ class Model:
             self._base_model = hub.KerasLayer(self._base_model_url, trainable=trainable, name="BERT")
             logger.debug("Downloaded base model from {url}".format(url=self._base_model_url))
 
-            vocab_file = self._base_model.resolved_object.vocab_file.asset_path.numpy()
-            do_lower_case = self._base_model.resolved_object.do_lower_case.numpy()
-            self._tokenizer = tokenization.FullTokenizer(vocab_file, do_lower_case)
+            self._preprocessor = hub.KerasLayer(self._preprocessor_url)
             logger.debug("Tokenizer built")
 
         except Exception as e:
             stacktrace = traceback.format_exc()
             logger.critical("{}".format(stacktrace))
             exit(1)
-
-    def _encode_sentence(self, s):
-        """
-        Encodes the sentence as required by BERT
-
-        :param s: the sentence
-        :return: the tokenized sentence
-        """
-        # Tokenizing the sentence
-        tokens = list(self._tokenizer.tokenize(s))
-
-        # Adding `[SEP]` at the end of the sentence as required by BERT
-        tokens.append('[SEP]')
-
-        # Converting tokens to ids
-        tokens = self._tokenizer.convert_tokens_to_ids(tokens)
-
-        # Padding the vector of ids with zeros up to a length=max_sequence_length - 1, where -1 because `[CLS]` will be
-        # added later
-        return tokens + [0] * (self._max_sequence_length - len(tokens) - 1)
 
     def get_features_tensor_from_ids(self, ids: [int], num_classes: int) -> tf.Tensor:
         """
@@ -114,24 +91,7 @@ class Model:
         :param data: the dataset
         :return:
         """
-        encoded_data = tf.ragged.constant([self._encode_sentence(s) for s in np.array(data)])
-
-        cls = [self._tokenizer.convert_tokens_to_ids(['[CLS]'])] * encoded_data.shape[0]
-        input_word_ids = tf.concat([cls, encoded_data], axis=-1)
-
-        input_mask = tf.ones_like(input_word_ids).to_tensor()
-        input_word_ids = input_word_ids.to_tensor()
-
-        type_cls = tf.ones_like(cls)
-        type_data = tf.ones_like(encoded_data)
-        input_type_ids = tf.concat([type_cls, type_data], axis=-1).to_tensor()
-
-        encoded_inputs = {
-            'input_word_ids': input_word_ids,
-            'input_mask': input_mask,
-            'input_type_ids': input_type_ids}
-
-        return encoded_inputs
+        return self._preprocessor(data)
 
     def get_bert_layer(self):
         """
@@ -150,16 +110,14 @@ class Model:
         :return: None
         """
         # Model definition
-        input_word_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="input_word_ids")
-        input_mask = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="input_mask")
-        segment_ids = tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="segment_ids")
+        encoder_inputs = dict(
+            input_word_ids=tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="input_word_ids"),
+            input_mask=tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="input_mask"),
+            input_type_ids=tf.keras.layers.Input(shape=(self._max_sequence_length,), dtype=tf.int32, name="segment_ids"),
+        )
         keywords_ids = tf.keras.layers.Input(shape=(num_keywords, ), name='keywords_ids')
 
-        pooled_output, sequence_output = self._base_model([input_word_ids, input_mask, segment_ids])
-        bert_output = tf.keras.layers.Lambda(
-            lambda x: x[:, 0, :], name='extract_CLS', output_shape=(None, 768)
-        )(sequence_output)  # extract representation of [CLS] token
-        # bert_output = tf.keras.layers.Flatten(name="bert_pooled_output_flatten")(pooled_output)
+        bert_output = self._base_model(encoder_inputs)["pooled_output"]
 
         hidden = tf.concat([bert_output, keywords_ids], -1)
         hidden = tf.keras.layers.Dense(256, activation=tf.nn.relu, name='dense_1')(hidden)
@@ -171,7 +129,7 @@ class Model:
         output = tf.keras.layers.Dense(output_classes, activation=tf.nn.softmax, name='output')(hidden)
 
         self._model = tf.keras.Model(
-            inputs=[input_word_ids, input_mask, segment_ids, keywords_ids],
+            inputs=[encoder_inputs, keywords_ids],
             outputs=output,
             name=self.model_name
         )
