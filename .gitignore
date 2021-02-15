@@ -1,7 +1,7 @@
 # My ignores
 package/src/resources/model/
 data/*
-*/logs/*
+**/logs/*
 .idea
 auth/*
 
