@@ -65,34 +65,35 @@ def run():
     model_name = config["model"]["name"]
     model_version = config["model"]["version"]
     logger.info(
-        "Model name: {name}, versione: {version}".format(
+        "Model name: {name}, version: {version}".format(
             name=model_name, version=model_version
         )
     )
 
     max_sequence_length = int(round(config["model"]["inputs"]["max_sequence_length"]))
     logger.info("Max sequence length: {length}".format(length=max_sequence_length))
+
     num_epochs = int(config["model"]["training"]["epochs"])
     logger.info("Epochs: {epochs}".format(epochs=num_epochs))
+
     batch_size = int(config["model"]["training"]["batch_size"])
     logger.info("Batch size: {batch_size}".format(batch_size=batch_size))
 
     ####################################################################################################################
     # Services and handlers
     ####################################################################################################################
-    logger.info("Database service set-up done")
+    logger.info("Creating services, model and utils objects")
 
-    preprocessor = Preprocessor(
-        preprocessor_url=preprocessor_url
-    )
+    preprocessor = Preprocessor(preprocessor_url=preprocessor_url)
+    logger.debug("Preprocessor created")
 
     dataset_handler = DatasetHandler(
         train_split=train_split,
         val_split=validation_split,
         test_split=test_split,
-        preprocessor=preprocessor
+        preprocessor=preprocessor,
     )
-    logger.info("Dataset handler set-up done")
+    logger.info("Dataset handler created")
 
     model = Model(
         base_model_url=bert_url,
@@ -102,34 +103,44 @@ def run():
         model_version=model_version,
         max_sequence_length=max_sequence_length,
     )
-    logger.info("Model handler set-up done.")
+    logger.info("Model created")
 
     ####################################################################################################################
     # Retrieving data
     ####################################################################################################################
-    logger.info("Starting to retrieve data from database service")
+    logger.info("Starting to retrieve data")
     kb = firestore_connector.get_all_data(FirestoreCollections.KNOWLEDGE_BASE.value)
     logger.info("Retrieved knowledge base")
+
     keywords = firestore_connector.get_all_data(FirestoreCollections.KEYWORDS.value)
     logger.info("Retrieved keywords")
-    logger.info("Data retrieved")
 
-    num_keywords = len(keywords)
     num_faqs = len(kb)
     logger.info("Number of KB classes: {num_classes}".format(num_classes=num_faqs))
-    logger.info("Number of keywords classes: {num_classes}".format(num_classes=num_keywords))
+
+    num_keywords = len(keywords)
+    logger.info(
+        "Number of keywords classes: {num_classes}".format(num_classes=num_keywords)
+    )
 
     ####################################################################################################################
     # Preparing training, validation and test sets
     ####################################################################################################################
     logger.info("Starting to process kb and keyword and splitting into ")
-    x_train, y_train, x_val, y_val, x_test, y_test = dataset_handler.get_train_val_test_splits(kb=kb, keywords=keywords)
+    (
+        x_train,
+        y_train,
+        x_val,
+        y_val,
+        x_test,
+        y_test,
+    ) = dataset_handler.get_train_val_test_splits(kb=kb, keywords=keywords)
 
     ####################################################################################################################
     # Building model
     ####################################################################################################################
     logger.info("Starting to build model")
-    model.build_custom_model(num_keywords=num_keywords, output_classes=num_faqs)
+    model.build(num_keywords=num_keywords, output_classes=num_faqs)
     logger.info("Model built")
 
     ####################################################################################################################
@@ -142,7 +153,7 @@ def run():
         X_val=x_val,
         y_val=y_val,
         epochs=num_epochs,
-        load_checkpoint=load_checkpoints
+        load_checkpoint=load_checkpoints,
     )
     logger.info("Training completed")
 
@@ -150,6 +161,7 @@ def run():
         "Saving model at path {path}".format(path=StorageLocations.MODEL.complete_path)
     )
     model.save()
+    logger.info("Model saved")
 
     ####################################################################################################################
     # Testing performance

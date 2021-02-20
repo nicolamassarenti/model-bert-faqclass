@@ -11,7 +11,11 @@ logger = logging.getLogger(__name__)
 
 class DatasetHandler:
     def __init__(
-        self, train_split: float = 0.8, val_split: float = 0.1, test_split: float = 0.1, preprocessor: Preprocessor = None
+        self,
+        train_split: float = 0.8,
+        val_split: float = 0.1,
+        test_split: float = 0.1,
+        preprocessor: Preprocessor = None,
     ):
 
         self._regex = r"(\s|\.|\')({})(\s|\n|\.|[?!-])"
@@ -72,7 +76,9 @@ class DatasetHandler:
 
         return 0
 
-    def _get_examples_keywords_labels(self, dataset: [dict], keywords: [str]) -> ([str], [int], [str]):
+    def _get_examples_keywords_labels(
+        self, dataset: [dict], keywords: [str]
+    ) -> ([str], [int], [str]):
         """
         For each example in the dataset, returns the example, the keyword id and the label associated to the example.
 
@@ -108,76 +114,6 @@ class DatasetHandler:
         y = y[indices].tolist()
 
         return x_text, x_keys, y
-
-    def get_examples_and_labels(self, kb: [dict] = None, keywords: [str] = None) -> (dict, [str]):
-        """
-        Returns the data examples, keyword ids and labels shuffled.
-        """
-
-        # Getting the label associated to each examples
-        training_examples_and_labels = self._get_example_label_pairs(data=kb)
-        logger.debug("Retrieved label and examples for each faq")
-
-        x_kb, x_keywords, y = self._get_examples_keywords_labels(
-            dataset=training_examples_and_labels, keywords=keywords
-        )
-        logger.debug(
-            "Obtained x_kb=`{x_kb}`, x_keywords=`{x_keywords}`, y=`{y}`".format(
-                x_kb=x_kb, x_keywords=x_keywords, y=y
-            )
-        )
-
-        # Shuffling keeping consistency between examples and labels
-        x_kb, x_keywords, y = self._shuffle(x_text=x_kb, x_keys=x_keywords, y=y)
-        logger.debug(
-            "Shuffled elements")
-
-        return {"kb": x_kb, "keywords_ids": x_keywords}, y
-
-    def get_train_validation_test_sets(
-        self,
-        x: [dict],
-        y: [str],
-        train_split: float = 0.6,
-        validation_split: float = 0.2
-    ) -> (dict, [int], dict, [int], dict, [int]):
-        """
-        Divides the data and labels into train, validation and test sets.
-        :param x: examples
-        :param y: labels
-        :return:
-        """
-        # TODO: rifare funzione
-        num_examples = len(x["kb"])
-
-        limit_train = round(train_split * num_examples)
-        limit_val = round(validation_split * num_examples)
-
-        x_kb = x["kb"]
-        x_keywords_ids = x["keywords_ids"]
-
-        # Train
-        x_train = {
-            "kb": x_kb[:limit_train],
-            "keywords_ids": x_keywords_ids[:limit_train],
-        }
-        y_train = y[:limit_train]
-
-        # Validation
-        x_val = {
-            "kb": x_kb[limit_train : limit_train + limit_val],
-            "keywords_ids": x_keywords_ids[limit_train : limit_train + limit_val],
-        }
-        y_val = y[limit_train : limit_train + limit_val]
-
-        # Test
-        x_test = {
-            "kb": x_kb[limit_train + limit_val :],
-            "keywords_ids": x_keywords_ids[limit_train + limit_val :],
-        }
-        y_test = y[min(num_examples, limit_train + limit_val) :]
-
-        return x_train, y_train, x_val, y_val, x_test, y_test
 
     def _get_keywords_from_raw_data(self, keywords: [dict]) -> [str]:
         return list(map(lambda x: x["DisplayText"].lower(), keywords))
@@ -228,22 +164,32 @@ class DatasetHandler:
         logger.debug("Validation set split index: {idx}".format(idx=val_idx))
 
         # Splitting into training, validation and test sets and preprocessing
-        logger.debug("Starting to split into training, validation and test sets and preprocessing data")
+        logger.debug(
+            "Starting to split into training, validation and test sets and preprocessing data"
+        )
         x_train = [
             self._preprocessor.preprocess(data=x_kb[:train_idx]),
-            tf.keras.utils.to_categorical(y=x_keywords[:train_idx], num_classes=num_keywords + 1)
+            tf.keras.utils.to_categorical(
+                y=x_keywords[:train_idx], num_classes=num_keywords + 1
+            ),
         ]
         y_train = tf.keras.utils.to_categorical(y=y[:train_idx], num_classes=num_faqs)
 
         x_val = [
-            self._preprocessor.preprocess(data=x_kb[train_idx : val_idx]),
-            tf.keras.utils.to_categorical(y=x_keywords[train_idx : val_idx], num_classes=num_keywords + 1)
+            self._preprocessor.preprocess(data=x_kb[train_idx:val_idx]),
+            tf.keras.utils.to_categorical(
+                y=x_keywords[train_idx:val_idx], num_classes=num_keywords + 1
+            ),
         ]
-        y_val = tf.keras.utils.to_categorical(y=y[train_idx : val_idx], num_classes=num_faqs)
+        y_val = tf.keras.utils.to_categorical(
+            y=y[train_idx:val_idx], num_classes=num_faqs
+        )
 
         x_test = [
             self._preprocessor.preprocess(data=x_kb[val_idx:]),
-            tf.keras.utils.to_categorical(y=x_keywords[val_idx:], num_classes=num_keywords + 1)
+            tf.keras.utils.to_categorical(
+                y=x_keywords[val_idx:], num_classes=num_keywords + 1
+            ),
         ]
         y_test = tf.keras.utils.to_categorical(y=y[val_idx:], num_classes=num_faqs)
 

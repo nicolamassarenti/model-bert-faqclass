@@ -69,34 +69,7 @@ class Model:
             logger.critical("{}".format(stacktrace))
             exit(1)
 
-    def get_features_tensor_from_ids(self, ids: [int], num_classes: int) -> tf.Tensor:
-        """
-        Returns the features given the ids of the keywords
-        :param ids: the vector of ids
-        :param num_classes: number of keywords
-        :return:
-        """
-
-        # # features = np.zeros(shape=(len(ids), num_classes), dtype=np.bool)
-        # features = []
-        # for idx, keyword_id in enumerate(ids):
-        #     if keyword_id is None:
-        #         features.append(0)
-        #     else:
-        #         features.append(keyword_id + 1)
-        #         # features[idx, keyword_id] = True
-
-        return tf.keras.utils.to_categorical(ids)
-
-    def get_bert_layer(self):
-        """
-        Returns the bert layer
-
-        :return: object
-        """
-        return self._base_model
-
-    def build_custom_model(self, num_keywords: int, output_classes: int):
+    def build(self, num_keywords: int, output_classes: int):
         """
         Builds the custom model
 
@@ -118,7 +91,9 @@ class Model:
                 shape=(self._max_sequence_length,), dtype=tf.int32, name="segment_ids"
             ),
         )
-        keywords_ids = tf.keras.layers.Input(shape=(num_keywords+1, ), name='keywords_ids')
+        keywords_ids = tf.keras.layers.Input(
+            shape=(num_keywords + 1,), name="keywords_ids"
+        )
 
         bert_output = self._base_model(encoder_inputs)["pooled_output"]
 
@@ -171,21 +146,19 @@ class Model:
         :return: None
         """
         callbacks = []
-        # if self._checkpoint_location is not None:
-        #     cp_callback = tf.keras.callbacks.ModelCheckpoint(
-        #         filepath=self._checkpoint_location,
-        #         save_weights_only=True,
-        #         verbose=1
-        #     )
-        #     callbacks = [cp_callback]
-        #
-        # if self._checkpoint_location is not None and load_checkpoint:
-        #     self._model.load_weights(self._checkpoint_location)
-        #
-        # early_stopping = tf.keras.callbacks.EarlyStopping(
-        #     monitor="val_loss", verbose=1, mode="auto", patience=10
-        # )
-        # callbacks.append(early_stopping)
+        if self._checkpoint_location is not None:
+            cp_callback = tf.keras.callbacks.ModelCheckpoint(
+                filepath=self._checkpoint_location, save_weights_only=True, verbose=1
+            )
+            callbacks = [cp_callback]
+
+        if self._checkpoint_location is not None and load_checkpoint:
+            self._model.load_weights(self._checkpoint_location)
+
+        early_stopping = tf.keras.callbacks.EarlyStopping(
+            monitor="val_loss", verbose=1, mode="auto", patience=10
+        )
+        callbacks.append(early_stopping)
 
         self._model.fit(
             X_train,
@@ -193,18 +166,8 @@ class Model:
             epochs=epochs,
             validation_data=(X_val, y_val),
             verbose=1,
-            callbacks=callbacks
+            callbacks=callbacks,
         )
-
-    def to_categorical_tensor(self, data: [int], num_classes: int = None) -> np.array:
-        """
-        Converts the data to a categorical tensor
-
-        :param data:
-        :param num_classes: the number of classes
-        :return:
-        """
-        return tf.keras.utils.to_categorical(y=data, num_classes=num_classes)
 
     def save(self):
         self._model.save(self.fine_tuned_model_location)
@@ -218,6 +181,4 @@ class Model:
         y_integers = tf.argmax(y, axis=1, output_type=tf.int32)
         test_accuracy(prediction, y_integers)
 
-        print("Test set accuracy: {:.3%}".format(test_accuracy.result()))
-
-        print("A")
+        logger.info("Test set accuracy: {:.3%}".format(test_accuracy.result()))
