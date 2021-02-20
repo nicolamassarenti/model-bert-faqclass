@@ -1,12 +1,14 @@
 import logging
 
 from bert_faqclass.configurations import config
-from bert_faqclass.connectors.gcloud.storage.locations import StorageLocations
-from bert_faqclass.connectors.gcloud.firestore.client import connector as firestore_connector
+from bert_faqclass.connectors.gcloud.firestore.client import (
+    connector as firestore_connector,
+)
 from bert_faqclass.connectors.gcloud.firestore.collections import FirestoreCollections
+from bert_faqclass.connectors.gcloud.storage.locations import StorageLocations
 from bert_faqclass.handlers.datasetHandler import DatasetHandler
 from bert_faqclass.model.model import Model
-
+from bert_faqclass.model.preprocessor import Preprocessor
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +17,14 @@ def run():
     ####################################################################################################################
     # Constants
     ####################################################################################################################
-    logger.info("Knowledge base collection: {name}".format(name=FirestoreCollections.KNOWLEDGE_BASE.value))
-    logger.info("Keywords collection: {name}".format(name=FirestoreCollections.KEYWORDS.value))
+    logger.info(
+        "Knowledge base collection: {name}".format(
+            name=FirestoreCollections.KNOWLEDGE_BASE.value
+        )
+    )
+    logger.info(
+        "Keywords collection: {name}".format(name=FirestoreCollections.KEYWORDS.value)
+    )
 
     train_split = float(config["model"]["training"]["split"]["train"])
     validation_split = float(config["model"]["training"]["split"]["validation"])
@@ -25,24 +33,29 @@ def run():
     logger.info("Validation split: {split}".format(split=validation_split))
     logger.info("Test split: {split}".format(split=test_split))
     if train_split + validation_split + test_split != 1.0:
-        error_message = "Training splits configuration is inconsistent: train+validation+test != 1, sum is {sum}".format(sum=train_split + validation_split + test_split)
+        error_message = "Training splits configuration is inconsistent: train+validation+test != 1, sum is {sum}".format(
+            sum=train_split + validation_split + test_split
+        )
         logger.critical(error_message)
         exit(1)
-        
-    logger.info("Model savings location: {location}".format(location=StorageLocations.MODEL.complete_path))
-    
-    is_tensorboard_enabled = config["model"]["training"]["is_tensorboard_enabled"]
-    logger.info("Tensorboard location: {location}. Enablement option set to {option}".format(
-        location=StorageLocations.TENSORBOARD.complete_path,
-        option=is_tensorboard_enabled
-    ))
+
+    logger.info(
+        "Model savings location: {location}".format(
+            location=StorageLocations.MODEL.complete_path
+        )
+    )
+
     load_checkpoints = config["model"]["training"]["load_checkpoints"]
-    logging.info("Load checkpoint option set to {option}".format(option=load_checkpoints))
+    logging.info(
+        "Load checkpoint option set to {option}".format(option=load_checkpoints)
+    )
     is_checkpoint_enabled = config["model"]["training"]["is_checkpoints_enabled"]
-    logger.info("Checkpoints location: {location}. Enablement option set to {option}".format(
-        location=StorageLocations.CHECKPOINTS.complete_path,
-        option=is_checkpoint_enabled
-    ))
+    logger.info(
+        "Checkpoints location: {location}. Enablement option set to {option}".format(
+            location=StorageLocations.CHECKPOINTS.complete_path,
+            option=is_checkpoint_enabled,
+        )
+    )
 
     bert_url = config["model"]["bert"]["url"]
     logger.info("Bert url: {url}".format(url=bert_url))
@@ -51,7 +64,11 @@ def run():
 
     model_name = config["model"]["name"]
     model_version = config["model"]["version"]
-    logger.info("Model name: {name}, versione: {version}".format(name=model_name, version=model_version))
+    logger.info(
+        "Model name: {name}, versione: {version}".format(
+            name=model_name, version=model_version
+        )
+    )
 
     max_sequence_length = int(round(config["model"]["inputs"]["max_sequence_length"]))
     logger.info("Max sequence length: {length}".format(length=max_sequence_length))
@@ -65,21 +82,25 @@ def run():
     ####################################################################################################################
     logger.info("Database service set-up done")
 
+    preprocessor = Preprocessor(
+        preprocessor_url=preprocessor_url
+    )
+
     dataset_handler = DatasetHandler(
         train_split=train_split,
         val_split=validation_split,
-        test_split=test_split
+        test_split=test_split,
+        preprocessor=preprocessor
     )
     logger.info("Dataset handler set-up done")
 
     model = Model(
         base_model_url=bert_url,
-        preprocessor_url=preprocessor_url,
         checkpoint_location=StorageLocations.CHECKPOINTS.complete_path,
         fine_tuned_model_location=StorageLocations.MODEL.complete_path,
         model_name=model_name,
         model_version=model_version,
-        max_sequence_length=max_sequence_length
+        max_sequence_length=max_sequence_length,
     )
     logger.info("Model handler set-up done.")
 
@@ -98,87 +119,18 @@ def run():
     logger.info("Number of KB classes: {num_classes}".format(num_classes=num_faqs))
     logger.info("Number of keywords classes: {num_classes}".format(num_classes=num_keywords))
 
-    # Getting only the DisplayText field and making all the keywords lowercase
-    keywords = dataset_handler.get_keywords_from_raw_data(keywords)
-    logger.info("Processed the keywords from raw data. Keywords are {keywords}".format(keywords=keywords))
-
     ####################################################################################################################
     # Preparing training, validation and test sets
     ####################################################################################################################
-    x, y = dataset_handler.get_examples_and_labels(kb=kb, keywords=keywords)
-    logger.info("Dataset retrieved")
-    logger.debug("Dataset is x: `{x}`, y: `{y}`".format(x=x, y=y))
-
-    # Splitting the dataset into train, validation and test sets
-    x_train, y_train, x_val, y_val, x_test, y_test = dataset_handler.get_train_validation_test_sets(
-        x=x,
-        y=y,
-        train_split=train_split,
-        validation_split=validation_split,
-        test_split=test_split
-    )
-    logger.info("Dataset split into train, validation and test sets.")
-    logger.debug("x_train: `{x_train}'".format(x_train=x_train))
-    logger.debug("y_train: `{y_train}'".format(y_train=y_train))
-    logger.debug("x_val: `{x_val}'".format(x_val=x_val))
-    logger.debug("y_val: `{y_val}'".format(y_val=y_val))
-    logger.debug("x_test: `{x_test}'".format(x_test=x_test))
-    logger.debug("y_test: `{y_test}'".format(y_test=y_test))
-
-    # Encoding the faq examples
-    x_train_encoded = model.encode(x_train["kb"])
-    logger.info("Encoded knowledge base training set")
-
-    x_validation_encoded = model.encode(x_val["kb"])
-    logger.info("Encoded knowledge base validation set")
-
-    x_test_encoded = model.encode(x_test["kb"])
-    logger.info("Encoded knowledge base test set")
-
-    # Obtaining the feature vectors wrt the keywords ids associated to each example
-    x_train_encoded["keywords_ids"] = model.get_features_tensor_from_ids(
-        ids=x_train["keywords_ids"],
-        num_classes=num_keywords
-    )
-    logger.info("Obtained features tensor with ids for training examples")
-    x_validation_encoded["keywords_ids"] = model.get_features_tensor_from_ids(
-        ids=x_val["keywords_ids"],
-        num_classes=num_keywords
-    )
-    logger.info("Obtained features tensor with ids for validation examples")
-    x_test_encoded["keywords_ids"] = model.get_features_tensor_from_ids(
-        ids=x_test["keywords_ids"],
-        num_classes=num_keywords
-    )
-    logger.info("Obtained features tensor with ids for test examples")
+    logger.info("Starting to process kb and keyword and splitting into ")
+    x_train, y_train, x_val, y_val, x_test, y_test = dataset_handler.get_train_val_test_splits(kb=kb, keywords=keywords)
 
     ####################################################################################################################
     # Building model
     ####################################################################################################################
-    model.build_custom_model(
-        num_keywords=num_keywords,
-        output_classes=num_faqs
-    )
+    logger.info("Starting to build model")
+    model.build_custom_model(num_keywords=num_keywords, output_classes=num_faqs)
     logger.info("Model built")
-
-    x_train = [
-        x_train_encoded["input_word_ids"],
-        x_train_encoded["input_mask"],
-        x_train_encoded["input_type_ids"],
-        x_train_encoded["keywords_ids"]
-    ]
-    logger.info("Training inputs structured as required by the model to be valid inputs")
-    y_train = model.to_categorical_tensor(data=y_train, num_classes=num_faqs)
-    logger.info("Training labels categorical tensor created")
-    x_val = [
-        x_validation_encoded["input_word_ids"],
-        x_validation_encoded["input_mask"],
-        x_validation_encoded["input_type_ids"],
-        x_validation_encoded["keywords_ids"]
-    ]
-    logger.info("Validation inputs structured as required by the model to be valid inputs")
-    y_val = model.to_categorical_tensor(data=y_val, num_classes=num_faqs)
-    logger.info("Validation labels categorical tensor created")
 
     ####################################################################################################################
     # Training
@@ -194,9 +146,16 @@ def run():
     )
     logger.info("Training completed")
 
-    logger.info("Saving model at path {path}".format(path=StorageLocations.MODEL.complete_path))
+    logger.info(
+        "Saving model at path {path}".format(path=StorageLocations.MODEL.complete_path)
+    )
     model.save()
-    logger.info("Model saved.")
+
+    ####################################################################################################################
+    # Testing performance
+    ####################################################################################################################
+    model.test(x=x_test, y=y_test)
+
 
 if __name__ == "__main__":
     run()

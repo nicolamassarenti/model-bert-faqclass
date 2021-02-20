@@ -1,7 +1,8 @@
-import os
-import yaml
 import logging
 import logging.config
+import os
+
+import yaml
 
 PACKAGE_LOCATION = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 RESOURCES_LOCATION = os.path.join(PACKAGE_LOCATION, "resources")
@@ -29,8 +30,12 @@ def _init_logger():
     log_config = _get_config_dict("log_config")
 
     # Upading path
-    log_config["handlers"]["debug_rotating_file_handler"]["filename"] = DEBUG_LOGS_LOCATION
-    log_config["handlers"]["info_rotating_file_handler"]["filename"] = INFO_LOGS_LOCATION
+    log_config["handlers"]["debug_rotating_file_handler"][
+        "filename"
+    ] = DEBUG_LOGS_LOCATION
+    log_config["handlers"]["info_rotating_file_handler"][
+        "filename"
+    ] = INFO_LOGS_LOCATION
     log_config["handlers"]["error_file_handler"]["filename"] = ERROR_LOGS_LOCATION
 
     # Setting configs

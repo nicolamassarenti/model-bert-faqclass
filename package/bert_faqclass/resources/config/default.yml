@@ -18,10 +18,6 @@ gcloud:
         bucket: "model_bert_faqclass"
         folders: "checkpoints/checkpoint"
 
-      tensorboard:
-        bucket: "model_bert_faqclass"
-        folders: "tensorboard"
-
       model_savings:
         bucket: "model_bert_faqclass"
         folders: "model"
@@ -39,7 +35,7 @@ model:
     max_sequence_length: 128 # Max length of the input strings
 
   training:
-    epochs: 1000
+    epochs: 15
     batch_size: 16
 
     load_checkpoints: False

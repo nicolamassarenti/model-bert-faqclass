@@ -10,6 +10,7 @@ class GcloudConfig:
 
 ########################################################################################################################
 
+
 class DatabaseConfig:
     def __init__(self, conf: dict):
         self.type = conf["type"]
@@ -28,6 +29,7 @@ class CollectionDetails:
 
 
 ########################################################################################################################
+
 
 class StorageConfig:
     def __init__(self, conf: dict):

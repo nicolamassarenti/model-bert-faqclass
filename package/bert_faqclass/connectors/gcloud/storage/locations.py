@@ -7,8 +7,7 @@ class StorageLocationsSpecs:
         self.bucket = bucket
         self.folders = folders
         self.complete_path = "gs://{bucket}/{folders}".format(
-            bucket=bucket,
-            folders=folders
+            bucket=bucket, folders=folders
         )
 
     def __str__(self):
@@ -16,9 +15,15 @@ class StorageLocationsSpecs:
 
 
 class StorageLocations(StorageLocationsSpecs, Enum):
-    CHECKPOINTS = gcloud_config.storage.locations.checkpoints.bucket, \
-                           gcloud_config.storage.locations.checkpoints.folders
-    TENSORBOARD = gcloud_config.storage.locations.tensorboard.bucket, \
-                           gcloud_config.storage.locations.tensorboard.folders
-    MODEL = gcloud_config.storage.locations.model_savings.bucket, \
-                    gcloud_config.storage.locations.model_savings.folders
+    CHECKPOINTS = (
+        gcloud_config.storage.locations.checkpoints.bucket,
+        gcloud_config.storage.locations.checkpoints.folders,
+    )
+    TENSORBOARD = (
+        gcloud_config.storage.locations.tensorboard.bucket,
+        gcloud_config.storage.locations.tensorboard.folders,
+    )
+    MODEL = (
+        gcloud_config.storage.locations.model_savings.bucket,
+        gcloud_config.storage.locations.model_savings.folders,
+    )
