@@ -35,7 +35,7 @@ model:
     max_sequence_length: 128 # Max length of the input strings
 
   training:
-    epochs: 15
+    epochs: 500
     batch_size: 16
 
     load_checkpoints: False
