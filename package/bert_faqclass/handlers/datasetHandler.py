@@ -83,7 +83,9 @@ class DatasetHandler:
 
         return 0
 
-    def _get_examples_keywords_labels(self, dataset: [dict], keywords: [str]) -> ([str], [int], [str]):
+    def _get_examples_keywords_labels(
+        self, dataset: [dict], keywords: [str]
+    ) -> ([str], [int], [str]):
         """
         For each example in the dataset, returns the example, the keyword id and the corresponding label
 
@@ -129,7 +131,7 @@ class DatasetHandler:
         return list(map(lambda x: x["DisplayText"].lower(), keywords))
 
     def get_train_val_test_splits(
-            self, kb: [dict], keywords: [dict]
+        self, kb: [dict], keywords: [dict]
     ) -> (tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor):
         """
         Returns the train, validation and test splits

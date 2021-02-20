@@ -186,4 +186,3 @@ class Model:
         y_integers = tf.argmax(y, axis=1, output_type=tf.int32)
         test_accuracy(prediction, y_integers)
         return test_accuracy.result()
-
