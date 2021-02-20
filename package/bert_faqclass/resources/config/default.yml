@@ -24,7 +24,7 @@ gcloud:
 ########################################################################################################################
 model:
   name: "model-bert-faqclass"
-  version: "0.0.3"
+  version: "1.0.0"
 
   bert:
     url: "https://tfhub.dev/tensorflow/bert_multi_cased_L-12_H-768_A-12/3"

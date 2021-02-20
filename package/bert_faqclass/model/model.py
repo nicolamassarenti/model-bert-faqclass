@@ -19,20 +19,15 @@ class Model:
         max_sequence_length: int = 128,
     ):
         """
-        Is the constuctor of the handler.
+        Creates the model
 
-        :param model_path: the url to download the model from tensorflow hub
-        :param model_name: the name of the model
-        :param model_version: the version of the model
-        :param max_sequence_length: the max sequence length accepted
-        :param plot_path: True if to plot the model
-        :param checkpoint_location: the path to the model
+        :param base_model_url: it's the url to download BERT
+        :param checkpoint_location: folder location for checkpoints
+        :param fine_tuned_model_location: folder location for model saving
+        :param model_name: name of the model
+        :param model_version: version of the model
+        :param max_sequence_length: max length of training examples
         """
-
-        if base_model_url is None:
-            error_message = "Url to download the base model has not been provided"
-            logger.critical(error_message)
-            exit(1)
 
         self.model_version = model_version
         self.model_name = model_name
@@ -49,7 +44,7 @@ class Model:
 
     def _init_bert_layer(self, trainable: bool = False):
         """
-        Creates the bert layer
+        Creates bert layer
 
         :param trainable: (bool) true if you want to re-train the layer via transfer learning
         :return: None
@@ -170,9 +165,19 @@ class Model:
         )
 
     def save(self):
+        """
+        Saves the model
+        :return:
+        """
         self._model.save(self.fine_tuned_model_location)
 
     def test(self, x: tf.Tensor, y: tf.Tensor):
+        """
+        Evaluates test accuracy
+        :param x: the examples
+        :param y: the labels
+        :return:
+        """
         test_accuracy = tf.keras.metrics.Accuracy()
 
         logits = self._model(x)
@@ -180,5 +185,5 @@ class Model:
 
         y_integers = tf.argmax(y, axis=1, output_type=tf.int32)
         test_accuracy(prediction, y_integers)
+        return test_accuracy.result()
 
-        logger.info("Test set accuracy: {:.3%}".format(test_accuracy.result()))

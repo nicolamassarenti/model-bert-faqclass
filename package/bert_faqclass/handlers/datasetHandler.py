@@ -17,6 +17,13 @@ class DatasetHandler:
         test_split: float = 0.1,
         preprocessor: Preprocessor = None,
     ):
+        """
+        Created the dataset handler
+        :param train_split: split of dataset for model training
+        :param val_split: split of dataset for model validation
+        :param test_split: split of dataset for model test
+        :param preprocessor: the preprocessor object to format data as required by the model
+        """
 
         self._regex = r"(\s|\.|\')({})(\s|\n|\.|[?!-])"
 
@@ -28,7 +35,7 @@ class DatasetHandler:
 
     def _get_examples_from_faq(self, faq: dict) -> [str]:
         """
-        Given an faq returns a list with the examples associated to the faq
+        Given an faq returns a list with the examples associated to the input faq
 
         :param faq: the faq
         :return: list of string with the training examples
@@ -41,9 +48,9 @@ class DatasetHandler:
 
     def _get_example_label_pairs(self, data: dict) -> [dict]:
         """
-        Returns each training example associated to the label.
+        Returns a dictionary with the training example and the corresponding label
 
-        :param data: all the knowledge base
+        :param data: the knowledge base
         :return: the list of training examples associated to the label
         """
         example_label_pairs = []
@@ -65,8 +72,8 @@ class DatasetHandler:
         Given a text, if a keyword is inside the text, it returns the position of the keyword inside the vector of
         keywords, otherwise, if no keyword is inside the text, returns None.
 
-        :param text: the text
-        :return: None OR integer from [0:len(keywords)]
+        :param text: the training example
+        :return: 0 if no keywords otherwise the keyword id, from 1 to len(keyword)+1
         """
         text = text.lower()
 
@@ -76,11 +83,9 @@ class DatasetHandler:
 
         return 0
 
-    def _get_examples_keywords_labels(
-        self, dataset: [dict], keywords: [str]
-    ) -> ([str], [int], [str]):
+    def _get_examples_keywords_labels(self, dataset: [dict], keywords: [str]) -> ([str], [int], [str]):
         """
-        For each example in the dataset, returns the example, the keyword id and the label associated to the example.
+        For each example in the dataset, returns the example, the keyword id and the corresponding label
 
         :param dataset: the dataset
         :return: list of training examples, list of keywords ids, list of labels
@@ -96,12 +101,12 @@ class DatasetHandler:
 
     def _shuffle(self, x_text: [str], x_keys: [int], y: [int]) -> ([str], [int], [int]):
         """
-        Shuffles the data, keeping the indexes the same among the three data.
+        Shuffles the data
 
         :param x_text: list of training examples
         :param x_keys: list of keywords ids
         :param y: list of labels
-        :return:
+        :return: the input shuffled
         """
         x_text = np.array(x_text)
         x_keys = np.array(x_keys)
@@ -116,9 +121,22 @@ class DatasetHandler:
         return x_text, x_keys, y
 
     def _get_keywords_from_raw_data(self, keywords: [dict]) -> [str]:
+        """
+        Returns the keyword
+        :param keywords:
+        :return:
+        """
         return list(map(lambda x: x["DisplayText"].lower(), keywords))
 
-    def get_train_val_test_splits(self, kb: [dict], keywords: [dict]):
+    def get_train_val_test_splits(
+            self, kb: [dict], keywords: [dict]
+    ) -> (tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor):
+        """
+        Returns the train, validation and test splits
+        :param kb: the knowledge base
+        :param keywords: the list of keywords
+        :return: the train, validation and test examples and labels
+        """
         # Data format transformation
         keywords = self._get_keywords_from_raw_data(keywords)
         logger.info(
