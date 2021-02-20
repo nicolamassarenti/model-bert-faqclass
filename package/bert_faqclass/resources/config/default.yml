@@ -35,12 +35,11 @@ model:
     max_sequence_length: 128 # Max length of the input strings
 
   training:
-    epochs: 500
+    epochs: 1000
     batch_size: 16
 
     load_checkpoints: False
 
-    is_tensorboard_enabled: True
     is_checkpoints_enabled: True
 
     split:

@@ -151,7 +151,7 @@ class Model:
             self._model.load_weights(self._checkpoint_location)
 
         early_stopping = tf.keras.callbacks.EarlyStopping(
-            monitor="val_loss", verbose=1, mode="auto", patience=10
+            monitor="val_loss", verbose=1, mode="auto", patience=100
         )
         callbacks.append(early_stopping)
 
