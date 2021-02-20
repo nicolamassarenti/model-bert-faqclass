@@ -40,7 +40,6 @@ class StorageConfig:
 class LocationsConfig:
     def __init__(self, conf: dict):
         self.checkpoints = LocationDetails(conf["checkpoints"])
-        self.tensorboard = LocationDetails(conf["tensorboard"])
         self.model_savings = LocationDetails(conf["model_savings"])
 
 

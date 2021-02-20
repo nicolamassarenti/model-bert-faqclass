@@ -19,10 +19,6 @@ class StorageLocations(StorageLocationsSpecs, Enum):
         gcloud_config.storage.locations.checkpoints.bucket,
         gcloud_config.storage.locations.checkpoints.folders,
     )
-    TENSORBOARD = (
-        gcloud_config.storage.locations.tensorboard.bucket,
-        gcloud_config.storage.locations.tensorboard.folders,
-    )
     MODEL = (
         gcloud_config.storage.locations.model_savings.bucket,
         gcloud_config.storage.locations.model_savings.folders,
