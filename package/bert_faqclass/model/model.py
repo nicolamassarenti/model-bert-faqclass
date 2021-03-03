@@ -57,7 +57,7 @@ class Model:
                 "Downloaded base model from {url}".format(url=self._base_model_url)
             )
 
-            logger.debug("Tokenizer built")
+            logger.debug("Base model built")
 
         except Exception as e:
             stacktrace = traceback.format_exc()
@@ -92,7 +92,6 @@ class Model:
 
         bert_output = self._base_model(encoder_inputs)["pooled_output"]
 
-        # hidden = tf.concat([bert_output, keywords_ids], -1)
         hidden = tf.keras.layers.Dense(128, activation=tf.nn.relu, name="dense_1")(
             bert_output
         )
