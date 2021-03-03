@@ -160,7 +160,7 @@ def run():
     logger.info(
         "Saving model at path {path}".format(path=StorageLocations.MODEL.complete_path)
     )
-    # model.save()
+    model.save()
     logger.info("Model saved")
 
     ####################################################################################################################
