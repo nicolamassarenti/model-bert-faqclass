@@ -4,11 +4,9 @@
 set -evx
 
 # Constants
-#PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-#PATH=.
-PROJECT_ID="bert-faqclass"
+PROJECT_ID="PROJECT_ID"
 
-SOURCE_IMAGE="bert_faqclass_model"
+SOURCE_IMAGE="SOURCE_IMAGE"
 REMOTE_IMAGE=${SOURCE_IMAGE}
 
 HOSTNAME=eu.gcr.io
